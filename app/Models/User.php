@@ -116,4 +116,28 @@ class User extends Authenticatable implements JWTSubject
             'name' => $this->name
         ];
     }
+
+    /**
+     * Get the job posts for an employer user.
+     */
+    public function jobPosts()
+    {
+        return $this->hasMany(JobPost::class, 'employer_id');
+    }
+
+    /**
+     * Get the applications for a candidate user.
+     */
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'candidate_id');
+    }
+
+    /**
+     * The skills that belong to the user (candidate).
+     */
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'user_skill');
+    }
 }
