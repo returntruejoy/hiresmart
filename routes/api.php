@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\RegistrationController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
+use App\Http\Controllers\Api\V1\JobPostController;
+use App\Http\Controllers\Api\V1\ApplicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +65,13 @@ Route::get('test', function () {
 Route::prefix('v1')->group(function () { 
     Route::post('register', [RegistrationController::class, 'register']);
     Route::post('login', [LoginController::class, 'login']);
+
+    Route::middleware(['auth:api', 'role:employer'])->group(function () {
+        Route::apiResource('job-posts', JobPostController::class)->only([
+            'store', 'update', 'destroy', 'index'
+        ]);
+        // Route::get('job-posts/{job_post}/applications', [ApplicationController::class, 'index']);
+    });
 });
 
 // Legacy route (you may want to remove this)
