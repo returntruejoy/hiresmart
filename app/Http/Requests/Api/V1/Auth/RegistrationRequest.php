@@ -51,7 +51,7 @@ class RegistrationRequest extends FormRequest
             'role' => [
                 'sometimes',
                 'string',
-                Rule::in([User::ROLE_ADMIN, User::ROLE_EMPLOYER, User::ROLE_CANDIDATE])
+                Rule::in([User::ROLE_EMPLOYER, User::ROLE_CANDIDATE])
             ]
         ];
     }
@@ -69,7 +69,7 @@ class RegistrationRequest extends FormRequest
             'email.unique' => 'This email address is already registered.',
             'password.required' => 'Password is required.',
             'password.confirmed' => 'Password confirmation does not match.',
-            'role.in' => 'Invalid role selected. Must be admin, employer, or candidate.'
+            'role.in' => 'The selected role is invalid. Please choose either employer or candidate.'
         ];
     }
 
