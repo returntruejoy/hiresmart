@@ -42,4 +42,9 @@ class ApplicationRepository
             ->where('candidate_id', $candidateId)
             ->exists();
     }
+
+    public function count(): int
+    {
+        return $this->model->count();
+    }
 }

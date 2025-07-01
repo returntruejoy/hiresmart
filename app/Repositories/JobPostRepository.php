@@ -65,4 +65,9 @@ class JobPostRepository
 
         return $query->latest()->get();
     }
+
+    public function count(): int
+    {
+        return $this->model->count();
+    }
 } 

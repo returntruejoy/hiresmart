@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Auth\RegistrationController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\JobPostController;
 use App\Http\Controllers\Api\V1\ApplicationController;
+use App\Http\Controllers\Api\V1\Admin\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +85,11 @@ Route::prefix('v1')->group(function () {
         // Candidate Routes
         Route::middleware('role:candidate')->group(function () {
             Route::post('job-posts/{job_post}/apply', [ApplicationController::class, 'store'])->name('job-posts.apply');
+        });
+
+        // Admin Routes
+        Route::middleware('role:admin')->group(function () {
+            Route::get('admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
         });
     });
 });

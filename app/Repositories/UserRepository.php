@@ -242,4 +242,9 @@ class UserRepository
     {
         return User::whereIn('id', $userIds)->delete();
     }
+
+    public function count(): int
+    {
+        return User::count();
+    }
 } 
