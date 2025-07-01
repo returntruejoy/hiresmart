@@ -8,6 +8,7 @@ use App\Http\Requests\Api\V1\JobPostRequest;
 use App\Http\Resources\Api\V1\JobPostResource;
 use App\Models\JobPost;
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class JobPostController extends Controller
@@ -28,12 +29,29 @@ class JobPostController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource for public.
      */
-    public function index()
+    public function index(Request $request)
+    {
+        $jobPosts = $this->jobPostService->searchJobPosts($request->all());
+        return JobPostResource::collection($jobPosts);
+    }
+
+    /**
+     * Display a listing of the resource for an employer.
+     */
+    public function indexForEmployer()
     {
         $jobPosts = $this->jobPostService->getJobPostsForCurrentUser();
         return JobPostResource::collection($jobPosts);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(JobPost $jobPost)
+    {
+        return new JobPostResource($jobPost);
     }
 
     /**

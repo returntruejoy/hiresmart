@@ -41,6 +41,16 @@ class JobPostService
     public function getJobPostsForCurrentUser()
     {
         $userId = Auth::id();
-        return $this->jobPostRepository->getForUser($userId);
+        return $this->jobPostRepository->getForEmployer($userId);
+    }
+
+    public function searchJobPosts(array $filters)
+    {
+        return $this->jobPostRepository->search($filters);
+    }
+
+    public function getJobPost($id)
+    {
+        return $this->jobPostRepository->find($id);
     }
 }

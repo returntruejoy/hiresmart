@@ -38,8 +38,31 @@ class JobPostRepository
         return $this->model->destroy($id);
     }
 
-    public function getForUser($userId)
+    public function find($id)
     {
-        return $this->model->where('user_id', $userId)->latest()->get();
+        return $this->model->findOrFail($id);
+    }
+
+    public function getForEmployer($employerId)
+    {
+        return $this->model->where('employer_id', $employerId)->latest()->get();
+    }
+
+    public function search(array $filters = [])
+    {
+        $query = $this->model->query()->where('is_active', true);
+
+        if (!empty($filters['keyword'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', '%' . $filters['keyword'] . '%')
+                  ->orWhere('description', 'like', '%' . $filters['keyword'] . '%');
+            });
+        }
+
+        if (!empty($filters['location'])) {
+            $query->where('location', 'like', '%' . $filters['location'] . '%');
+        }
+
+        return $query->latest()->get();
     }
 } 
