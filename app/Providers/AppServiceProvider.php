@@ -28,6 +28,13 @@ class AppServiceProvider extends ServiceProvider
                     ->daily()
                     ->at('02:00')
                     ->appendOutputTo(storage_path('logs/job-archiving.log'));
+            
+            // Remove unverified users weekly on Sunday at 3:00 AM
+            $schedule->command('app:remove-unverified-users')
+                    ->weekly()
+                    ->sundays()
+                    ->at('03:00')
+                    ->appendOutputTo(storage_path('logs/user-cleanup.log'));
         });
     }
 }
