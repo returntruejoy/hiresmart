@@ -1,565 +1,529 @@
-# HireSmart Backend - Installation Guide
+# HireSmart - Job Platform Backend
 
-This guide provides step-by-step instructions for setting up the HireSmart backend on a local development machine using Laravel Sail.
+A Laravel 12 job platform with intelligent job matching, connecting employers with candidates based on skills (50%), salary (30%), and location (20%).
 
----
+## Technology Stack
+- Laravel 12 (PHP 8.2+)
+- PostgreSQL
+- Redis (cache & queue)
+- JWT authentication
+- Docker (Laravel Sail)
 
-### **1. Prerequisites**
+## Core Features
+- **Intelligent Job Matching**: Weighted scoring algorithm based on skills, salary, and location
+- **Role-based Access**: Admin, Employer, and Candidate permissions
+- **Application Management**: Complete job application workflow
+- **Performance**: Redis caching and background job processing
+- **Maintenance**: Scheduled cleanup of old data
 
-Before you begin, ensure you have the following software installed on your system:
-
-- **Docker Desktop:** Laravel Sail uses Docker to create a consistent development environment. [Download and install it here](https://www.docker.com/products/docker-desktop/).
-- **Git:** For cloning the project repository.
-
-*You do not need to install PHP, Composer, or Node.js locally. All required versions are provided by the Sail development environment.*
-
----
-
-### **2. Installation Steps**
-
-**Step 1: Clone the Repository**
-Open your terminal and clone the project repository.
+## Installation
 
 ```bash
+# Clone and setup
 git clone https://github.com/returntruejoy/hiresmart
-Or with ssh
-git clone git@github.com:returntruejoy/hiresmart.git
 cd hiresmart
-```
-
-**Step 2: Copy the Environment File**
-This file stores your application's configuration, including database credentials and API keys.
-
-```bash
 cp .env.example .env
-```
 
-**Step 3: Start the Sail Containers**
-This command will download the necessary Docker images and start all the services (app, PostgreSQL database, Redis) in the background.
-
-```bash
+# Start Docker and install dependencies
 ./vendor/bin/sail up -d
-```
-*Note: The first time you run this, it may take several minutes to download the required Docker images.*
-
-**Step 4: Install Composer Dependencies**
-Once the containers are running, execute this command to install the project's PHP dependencies inside the application container.
-
-```bash
 ./vendor/bin/sail composer install
-```
 
-**Step 5: Generate Application & JWT Keys**
-Every Laravel application needs a unique key for encryption, and our app needs a key for JWT authentication.
-
-```bash
-# Generate Laravel App Key
+# Setup application
 ./vendor/bin/sail artisan key:generate
-
-# Generate JWT Secret Key
 ./vendor/bin/sail artisan jwt:secret
-```
-
-**Step 6: Run Migrations and Seed the Database**
-This single command creates all the necessary tables in your PostgreSQL database and populates them with essential data, including a default admin user and test data for jobs and candidates.
-
-```bash
 ./vendor/bin/sail artisan migrate:fresh --seed
-```
 
-**🎉 Congratulations, the installation is complete!**
-
----
-
-### **3. Running and Testing the Application**
-
-**Your application is already running.** The API is accessible at `http://localhost`
-Do not forget to use /api/v1/ before every endpoints.
-
-**Step 1: Run the Queue Worker (Crucial)**
-Our most important features (like job matching and notifications) run as background jobs. You **must** have a queue worker running to process them.
-
-**Open a new, separate terminal window**, navigate to the project directory, and run:
-
-```bash
+# Start queue worker (separate terminal)
 ./vendor/bin/sail artisan queue:work
 ```
-*Leave this terminal open. It acts as your background job processor.*
 
-**Step 2: Test the Public API**
-In your original terminal, you can test if the API is responding correctly by fetching the public job listings or Leverage the Postman collection.
+## Testing
 
+### Default Admin Account
+- Email: `admin@hiresmart.com`
+- Password: `password`
+
+### Available Seeders
+```bash
+./vendor/bin/sail artisan db:seed --class=DevelopmentSeeder    # Small dataset with test accounts
+./vendor/bin/sail artisan db:seed --class=ComprehensiveSeeder  # Large dataset for performance testing
+./vendor/bin/sail artisan db:seed --class=MaintenanceTestSeeder # For testing cleanup commands
+./vendor/bin/sail artisan db:seed --class=EdgeCaseTestSeeder   # Boundary conditions and special cases
+./vendor/bin/sail artisan db:seed                              # Interactive seeding
+```
+
+### Key Commands
+```bash
+./vendor/bin/sail artisan app:run-job-matching-now      # Trigger job matching
+./vendor/bin/sail artisan jobs:archive-old              # Archive old job posts
+./vendor/bin/sail artisan app:remove-unverified-users   # Remove old unverified users
+./vendor/bin/sail artisan schedule:run                  # Run scheduled tasks
+```
+
+### Quick API Test
 ```bash
 curl -X GET "http://localhost/api/v1/job-posts" -H "Accept: application/json" | jq
-
-Or you can use  postman*
 ```
-*This should return a JSON array of the sample job posts created by the seeder.*
 
-**Step 3: Default Admin User**
-The database seeder creates a default admin user for you to use.
+## API Endpoints
 
-- **Email:** `admin@hiresmart.com`
-- **Password:** `password`
-
-You can use these credentials with an API client (like Postman or Insomnia) to log in via the `/api/v1/login` endpoint and test authenticated routes.
-
-# Manually trigger the job matching process
-./vendor/bin/sail artisan app:run-job-matching-now
-
-# Manually archive job posts older than 30 days
-./vendor/bin/sail artisan jobs:archive-old
-
-# Manually remove unverified users older than 7 days
-./vendor/bin/sail artisan app:remove-unverified-users
-
-# Run the scheduler to execute daily/weekly tasks (for testing)
-./vendor/bin/sail artisan schedule:run
-
-# HireSmart Backend - Complete Project Overview & Testing Guide
-
-## 🎯 Executive Summary
-
-**HireSmart** is a sophisticated job platform backend built with Laravel 12, featuring intelligent job matching, automated notifications, and performance optimization. The system connects employers with qualified candidates through an AI-powered matching algorithm that considers skills, salary expectations, and location preferences.
-
----
-
-## 🏗️ System Architecture
-
-### Technology Stack
-- **Framework**: Laravel 12 (PHP 8.2+)
-- **Database**: PostgreSQL
-- **Cache**: Redis
-- **Authentication**: JWT (JSON Web Tokens)
-- **Queue System**: Redis-based background job processing
-- **Email**: Laravel Mail with queued notifications
-- **Development Environment**: Docker (Laravel Sail)
-
-### Architectural Pattern
-The system follows a **Service/Repository Pattern** for clean, maintainable code:
-- **Repositories**: Handle all database interactions (UserRepository, JobPostRepository, ApplicationRepository)
-- **Services**: Contain business logic (AuthService, JobMatchingService, JobPostService, etc.)
-- **Controllers**: Thin layer handling HTTP requests/responses
-- **Policies**: Authorization logic for resource access control
-
----
-
-## 👥 User Roles & Authentication
-
-### User Types
-1. **Admin** (`admin`): System administration and oversight
-2. **Employer** (`employer`): Post jobs, manage applications, view statistics
-3. **Candidate** (`candidate`): Apply to jobs, receive match notifications
-
-### Authentication System
-- **JWT-based authentication** for secure, stateless API access
-- **Role-based authorization** using middleware and policies
-- **Secure registration** prevents public admin user creation
-- **Default admin account**: `admin@hiresmart.com` / `password`
-
-### Security Features
-- Password hashing with bcrypt
-- JWT token expiration and refresh
-- Role-based route protection
-- Policy-based resource authorization
-- Input validation and sanitization
-
----
-
-## 🚀 Core Features
-
-### 1. User Management
-- **Registration**: Public endpoint for employers and candidates
-- **Login/Logout**: JWT token-based authentication
-- **Profile Management**: User skills, location preferences, salary expectations
-- **Role-based Access Control**: Different permissions per user type
-
-### 2. Job Management
-- **CRUD Operations**: Full job post management for employers
-- **Public Job Listings**: Browse active jobs without authentication
-- **Application System**: Candidates can apply to jobs (one application per job)
-- **Job Archiving**: Automatic deactivation of old job posts (30+ days)
-
-### 3. Intelligent Job Matching System ⭐
-- **Background Processing**: Asynchronous matching using Redis queues
-- **Weighted Algorithm**: 
-  - Skills matching (50% weight)
-  - Salary compatibility (30% weight)
-  - Location preference (20% weight)
-- **Match Scoring**: 0-100% compatibility score
-- **High Match Notifications**: Automatic emails for 70%+ matches
-- **Match History**: Persistent storage of all match calculations
-
-### 4. Performance Optimization
-- **Redis Caching**: 
-  - Job listings cached for 5 minutes
-  - Employer statistics cached for 5 minutes
-  - Intelligent cache invalidation on data changes
-- **Query Optimization**: Eager loading to prevent N+1 problems
-- **Background Jobs**: Resource-intensive tasks run asynchronously
-
-### 5. Automated Maintenance
-- **Daily Job Archiving**: Deactivates jobs older than 30 days (2:00 AM)
-- **Weekly User Cleanup**: Removes unverified users after 7 days (Sundays 3:00 AM)
-- **Configurable Scheduling**: Easy to modify timing and frequency
-
----
-
-## 📊 Database Schema
-
-### Core Tables
-- **users**: User accounts with roles, preferences, and salary expectations
-- **job_posts**: Job listings with company info, requirements, and salary ranges
-- **applications**: Candidate applications to jobs
-- **skills**: Skill definitions (PHP, Laravel, React, etc.)
-- **job_matches**: Calculated matches with scores and details
-- **job_post_skill**: Many-to-many job-skill relationships
-- **user_skill**: Many-to-many user-skill relationships
-
-### Key Relationships
-- User → JobPost (employer relationship)
-- User → Application (candidate applications)
-- JobPost → Application (job applications)
-- JobMatch → User/JobPost (matching results)
-- Skills ↔ Users/JobPosts (many-to-many)
-
----
-
-## 🔌 API Endpoints
+### Authentication
+All authenticated endpoints require a JWT token in the Authorization header:
+```
+Authorization: Bearer {your-jwt-token}
+```
 
 ### Public Endpoints
 ```
-GET  /api/v1/job-posts           # List all active jobs
-GET  /api/v1/job-posts/{id}      # View specific job
-POST /api/v1/register            # User registration
-POST /api/v1/login               # User login
+GET  /api/v1/job-posts                     # List active jobs
+GET  /api/v1/job-posts/{job_post}          # View specific job
+POST /api/v1/register                      # User registration
+POST /api/v1/login                         # User login
+GET  /api/v1/job-posts/cache/stats         # Cache statistics
+POST /api/v1/job-posts/cache/clear         # Clear cache
 ```
 
-### Employer Endpoints (Authenticated)
+### Employer Endpoints (Authenticated + Role: employer)
 ```
-GET    /api/v1/employer/job-posts          # Employer's jobs
-POST   /api/v1/job-posts                   # Create job
-PUT    /api/v1/job-posts/{id}              # Update job
-DELETE /api/v1/job-posts/{id}              # Delete job
-GET    /api/v1/job-posts/{id}/applications # View applications
-GET    /api/v1/employer/stats              # Dashboard statistics
-```
-
-### Candidate Endpoints (Authenticated)
-```
-POST /api/v1/job-posts/{id}/apply  # Apply to job
+GET    /api/v1/employer/job-posts                 # Employer's jobs
+POST   /api/v1/job-posts                          # Create job
+PUT    /api/v1/job-posts/{job_post}               # Update job
+DELETE /api/v1/job-posts/{job_post}               # Delete job
+GET    /api/v1/job-posts/{job_post}/applications  # View applications
+GET    /api/v1/employer/stats                     # Dashboard statistics
 ```
 
-### Admin Endpoints (Authenticated)
+### Candidate Endpoints (Authenticated + Role: candidate)
+```
+POST /api/v1/job-posts/{job_post}/apply  # Apply to job
+```
+
+### Admin Endpoints (Authenticated + Role: admin)
 ```
 GET /api/v1/admin/dashboard  # Admin dashboard
 ```
 
-### Cache Management
-```
-GET  /api/v1/job-posts/cache/stats  # Cache statistics
-POST /api/v1/job-posts/cache/clear  # Clear cache
-```
+### API Usage Examples
 
----
-
-## 🧪 Complete Testing Guide
-
- **Start Queue Worker** (CRITICAL):
-   ```bash
-   ./vendor/bin/sail artisan queue:work
-   ```
-   *Keep this running in a separate terminal - required for job matching and notifications*
-
-### Test Data Overview
-The seeder creates realistic test data:
-- **Admin**: `admin@hiresmart.com` / `password`
-- **Employer**: `employer@example.com` (Tech Company Inc.)
-- **Candidates**: 4 test candidates with different skill sets and preferences
-- **Jobs**: 2 job posts (Senior Laravel Developer, Frontend Developer)
-- **Skills**: 8 technical skills (PHP, Laravel, Vue.js, React, etc.)
-
-### Testing Scenarios
-
-#### 1. Authentication Testing
+#### Login and Get Token
 ```bash
-# Test registration
-curl -X POST http://localhost/api/v1/register \
+curl -X POST "http://localhost/api/v1/login" \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "Test User",
-    "email": "test@example.com",
-    "password": "password",
-    "password_confirmation": "password",
-    "role": "candidate"
-  }'
-
-# Test login
-curl -X POST http://localhost/api/v1/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@hiresmart.com",
-    "password": "password"
-  }'
+  -H "Accept: application/json" \
+  -d '{"email":"admin@hiresmart.com","password":"password"}'
 ```
 
-#### 2. Job Management Testing
+#### Use Token for Authenticated Request
 ```bash
-# View public job listings
-curl -X GET http://localhost/api/v1/job-posts
-
-# Create job (requires employer token)
-curl -X POST http://localhost/api/v1/job-posts \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Backend Developer",
-    "description": "Looking for PHP developer",
-    "company_name": "Test Company",
-    "location": "San Francisco, CA",
-    "salary_min": 90000,
-    "salary_max": 130000,
-    "skill_ids": [1, 2]
-  }'
+curl -X GET "http://localhost/api/v1/admin/dashboard" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"
 ```
 
-#### 3. Job Matching Testing
-```bash
-# Trigger job matching manually
-./vendor/bin/sail artisan app:run-job-matching-now
-
-# Check logs for matching results
-./vendor/bin/sail logs | grep "Job Matching"
-
-# Check email notifications in logs
-./vendor/bin/sail logs | grep "notification"
+### Response Format
+```json
+{
+  "success": true|false,
+  "message": "Description",
+  "data": {...},
+  "errors": {...} // Only on validation errors
+}
 ```
 
-#### 4. Application Testing
-```bash
-# Apply to job (requires candidate token)
-curl -X POST http://localhost/api/v1/job-posts/1/apply \
-  -H "Authorization: Bearer CANDIDATE_TOKEN" \
-  -H "Content-Type: application/json"
+### HTTP Status Codes
+- `200` - Success
+- `201` - Created
+- `401` - Unauthorized (invalid/missing token)
+- `403` - Forbidden (insufficient permissions)
+- `404` - Not Found
+- `422` - Validation Error
+- `500` - Server Error
 
-# View applications (requires employer token)
-curl -X GET http://localhost/api/v1/job-posts/1/applications \
-  -H "Authorization: Bearer EMPLOYER_TOKEN"
-```
+## Architecture
+- **Pattern**: Service/Repository pattern with thin controllers
+- **Database**: Users, job posts, applications, skills, job matches
+- **Authentication**: JWT tokens with role-based access control
+- **Middleware**: Role-based route protection
 
-#### 5. Performance Testing
-```bash
-# Check cache statistics
-curl -X GET http://localhost/api/v1/job-posts/cache/stats
+## Configuration
 
-# Clear cache
-curl -X POST http://localhost/api/v1/job-posts/cache/clear
-
-# Test cache performance (jobs should load faster on second request)
-time curl -X GET http://localhost/api/v1/job-posts
-time curl -X GET http://localhost/api/v1/job-posts
-```
-
-### Expected Test Results
-
-#### Job Matching Expectations
-Based on test data, you should see these match scores:
-- **Alice PerfectMatch** → Senior Laravel Developer: ~85% (perfect skills + location + good salary)
-- **Bob GoodMatch** → Senior Laravel Developer: ~60% (good skills + location, but salary too high)
-- **Charlie Remote** → Frontend Developer: ~90% (perfect skills + location + salary)
-- **David WrongLocation** → Senior Laravel Developer: ~65% (good skills + salary, wrong location)
-
-#### Notification Testing
-- High matches (70%+) should trigger email notifications
-- Check logs for: `High match notification queued for Job #X and Candidate #Y`
-- Email content appears in `storage/logs/laravel.log`
-
-#### Cache Testing
-- First job listing request: ~100-200ms
-- Cached job listing request: ~10-50ms
-- Cache automatically clears when jobs are created/updated/deleted
-
----
-
-## 🛠️ Daily Development Commands
-
-### Essential Commands
-```bash
-# Start development environment
-./vendor/bin/sail up -d
-
-# Run queue worker (always needed)
-./vendor/bin/sail artisan queue:work
-
-# Reset database with fresh test data
-./vendor/bin/sail artisan migrate:fresh --seed
-
-# Trigger job matching
-./vendor/bin/sail artisan app:run-job-matching-now
-
-# View logs
-./vendor/bin/sail logs -f
-```
-
-### Maintenance Commands
-```bash
-# Archive old jobs
-./vendor/bin/sail artisan jobs:archive-old
-
-# Remove unverified users
-./vendor/bin/sail artisan app:remove-unverified-users
-
-# Run scheduler (for testing scheduled tasks)
-./vendor/bin/sail artisan schedule:run
-
-# Clear all caches
-./vendor/bin/sail artisan cache:clear
-./vendor/bin/sail artisan config:clear
-```
-
----
-
-## 📈 Business Value & ROI
-
-### For Employers
-- **Automated Candidate Discovery**: No manual searching through resumes
-- **Quality Scoring**: Data-driven candidate ranking (0-100% match)
-- **Time Savings**: Background processing doesn't slow down the platform
-- **Real-time Statistics**: Dashboard with application metrics
-
-### For Candidates
-- **Proactive Notifications**: Get alerted about relevant opportunities
-- **Personalized Matching**: Algorithm considers skills, salary, and location
-- **One-click Applications**: Streamlined application process
-
-### For Platform Owners
-- **Scalable Architecture**: Handles growth through caching and background jobs
-- **Low Maintenance**: Automated cleanup and archiving
-- **Performance Optimized**: Redis caching reduces database load
-- **Extensible Design**: Easy to add new features and matching criteria
-
----
-
-## 🔧 Configuration & Customization
-
-### Job Matching Algorithm
-Modify weights in `config/matching.php`:
+### Job Matching Algorithm - Weghted
 ```php
+// config/matching.php
 'weights' => [
-    'skills' => 0.5,    // 50% weight on skills
-    'salary' => 0.3,    // 30% weight on salary
-    'location' => 0.2,  // 20% weight on location
+    'skills' => 0.5,    // 50% weight
+    'salary' => 0.3,    // 30% weight
+    'location' => 0.2,  // 20% weight
 ],
-```
 
-### Notification Threshold
-Change in `JobMatchingService.php`:
-```php
+// JobMatchingService.php
 const MATCH_THRESHOLD = 70; // Send notifications for 70%+ matches
 ```
 
-### Cache Duration
-Modify in respective services:
+### Scheduled Tasks
 ```php
-Cache::remember('key', 300, $callback); // 5 minutes = 300 seconds
-```
-
-### Scheduled Task Timing
-Update in `AppServiceProvider.php`:
-```php
+// AppServiceProvider.php
 $schedule->command('jobs:archive-old')->dailyAt('02:00');
 $schedule->command('app:remove-unverified-users')->weekly()->sundays()->at('03:00');
 ```
 
----
+## 📝 API Endpoints
 
-## 🚀 Production Deployment Checklist
+### User Registration Endpoints
 
-### Environment Configuration
-- [ ] Set `APP_ENV=production`
-- [ ] Configure real database credentials
-- [ ] Set up Redis server
-- [ ] Configure SMTP for email notifications
-- [ ] Generate secure JWT secret
-- [ ] Set up SSL/HTTPS
+#### Employer Registration
+```
+POST /api/v1/auth/register/employer
+```
 
-### Performance Optimization
-- [ ] Enable OPcache
-- [ ] Configure Redis persistence
-- [ ] Set up database connection pooling
-- [ ] Implement CDN for static assets
-- [ ] Configure log rotation
+#### Candidate Registration
+```
+POST /api/v1/auth/register/candidate
+```
 
-### Security Hardening
-- [ ] Disable debug mode
-- [ ] Configure CORS properly
-- [ ] Set up rate limiting
-- [ ] Implement API versioning
-- [ ] Regular security updates
+## 📊 Request Examples
 
-### Monitoring & Maintenance
-- [ ] Set up application monitoring
-- [ ] Configure log aggregation
-- [ ] Schedule regular backups
-- [ ] Monitor queue performance
-- [ ] Set up alerts for failures
+### Employer Registration Request
+```json
+{
+    "name": "TechCorp HR",
+    "email": "hr@techcorp.com",
+    "password": "SecurePass123!",
+    "password_confirmation": "SecurePass123!"
+}
+```
 
----
+### Candidate Registration Request
+```json
+{
+    "name": "Jane Smith",
+    "email": "jane@example.com",
+    "password": "SecurePass123!",
+    "password_confirmation": "SecurePass123!"
+}
+```
 
-## 💡 Future Enhancement Opportunities
+## ✅ Success Response Example
+```json
+{
+    "success": true,
+    "message": "User registered successfully",
+    "data": {
+        "user": {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@example.com",
+            "role": "candidate",
+            "email_verified_at": null,
+            "created_at": "2025-01-20 14:30:00",
+            "updated_at": "2025-01-20 14:30:00"
+        },
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+        "token_type": "bearer",
+        "expires_in": 3600
+    },
+    "meta": {
+        "api_version": "v1",
+        "timestamp": "2025-01-20T14:30:00.000000Z"
+    }
+}
+```
 
-### Advanced Matching
-- Machine learning-based scoring
-- Candidate experience level weighting
-- Company culture fit analysis
-- Interview availability matching
+## ❌ Error Response Example
+```json
+{
+    "success": false,
+    "message": "Validation failed",
+    "errors": {
+        "email": ["The email address is already registered."],
+        "password": ["The password confirmation does not match."]
+    }
+}
+```
 
-### Communication Features
-- In-app messaging between employers and candidates
-- Interview scheduling system
-- Application status tracking
-- Feedback collection system
+## 🔐 Using the JWT Token
 
-### Analytics & Insights
-- Employer dashboard with hiring analytics
-- Candidate success rate tracking
-- Market salary insights
-- Skill demand analysis
+### Include in Headers
+```
+Authorization: Bearer your_jwt_token_here
+```
 
-### Integration Possibilities
-- LinkedIn profile import
-- GitHub skill analysis
-- Calendar integration for interviews
-- Payment processing for premium features
+### cURL Example
+```bash
+curl -X GET "http://your-app.com/api/v1/user/profile" \
+  -H "Authorization: Bearer your_jwt_token_here" \
+  -H "Accept: application/json"
+```
 
----
+### JavaScript/Axios Example
+```javascript
+const token = localStorage.getItem('jwt_token');
 
-## 📞 Support & Maintenance
+axios.get('/api/v1/user/profile', {
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Accept': 'application/json'
+  }
+});
+```
 
-### Troubleshooting Common Issues
-1. **Queue not processing**: Ensure `queue:work` is running
-2. **Database connection errors**: Check PostgreSQL container status
-3. **Redis connection refused**: Verify Redis container and `REDIS_HOST=redis`
-4. **JWT errors**: Regenerate JWT secret with `artisan jwt:secret`
-5. **Email not sending**: Check mail configuration in `.env`
+## 🛡️ Password Requirements
+- Minimum 8 characters
+- Must contain uppercase letters
+- Must contain lowercase letters  
+- Must contain numbers
+- Must contain symbols
 
-### Log Locations
-- Application logs: `storage/logs/laravel.log`
-- Queue job logs: Included in main Laravel log
-- Email notifications: Logged when using 'log' mail driver
+## 🔄 Token Information
+- **Default TTL**: 60 minutes
+- **Refresh TTL**: 2 weeks
+- **Algorithm**: HS256
+- **Custom Claims**: role, email, name
 
-### Performance Monitoring
-- Monitor Redis memory usage
-- Track database query performance
-- Watch queue job processing times
-- Monitor API response times
+## ⚙️ JWT Custom Claims
+The JWT token includes these custom claims:
+```json
+{
+  "role": "candidate",
+  "email": "user@example.com",
+  "name": "User Name",
+  "sub": 1,
+  "iat": 1642680000,
+  "exp": 1642683600
+}
+```
 
----
+## 🚀 Testing with Postman
 
-## 🎉 Conclusion
+1. **Set Request Type**: POST
+2. **URL**: `http://localhost/api/v1/auth/register`
+3. **Headers**:
+   - `Content-Type: application/json`
+   - `Accept: application/json`
+4. **Body (raw JSON)**:
+   ```json
+   {
+       "name": "Test User",
+       "email": "test@example.com",
+       "password": "SecurePass123!",
+       "password_confirmation": "SecurePass123!",
+       "role": "candidate"
+   }
 
-HireSmart represents a complete, production-ready job platform backend with intelligent matching capabilities. The system is designed for scalability, maintainability, and performance, making it suitable for everything from startup MVPs to enterprise-level deployments.
+# HireSmart Factories and Seeders Guide
 
-The automated job matching system, combined with performance optimization and maintenance automation, provides significant value to all stakeholders while requiring minimal ongoing intervention.
+Complete test data generation system for users, job posts, skills, applications, and job matches with realistic relationships.
 
-**Ready to revolutionize how people find jobs and hire talent!** 🚀 
+## Factories
+
+### UserFactory
+```php
+User::factory()->create();                    // Basic user
+User::factory()->admin()->create();           // Admin user
+User::factory()->employer()->create();        // Employer user
+User::factory()->candidate()->create();       // Candidate user
+User::factory()->candidate()->senior()->create();  // Senior candidate
+User::factory()->candidate()->withLocation('NYC')->create();
+User::factory()->candidate()->withSalaryExpectation(80000, 120000)->create();
+```
+
+### JobPostFactory
+```php
+JobPost::factory()->create();                 // Basic job post
+JobPost::factory()->senior()->create();       // Senior position
+JobPost::factory()->junior()->create();       // Junior position
+JobPost::factory()->remote()->create();       // Remote job
+JobPost::factory()->inLocation('SF')->create();
+JobPost::factory()->withSalary(70000, 100000)->create();
+JobPost::factory()->forEmployer($employer)->create();
+```
+
+### SkillFactory
+```php
+Skill::factory()->create();                   // Random skill
+Skill::factory()->programmingLanguage()->create();
+Skill::factory()->webFramework()->create();
+Skill::factory()->database()->create();
+Skill::factory()->cloudDevOps()->create();
+```
+
+### ApplicationFactory
+```php
+Application::factory()->create();             // Basic application
+Application::factory()->submitted()->create(); // Status: submitted
+Application::factory()->viewed()->create();    // Status: viewed
+Application::factory()->shortlisted()->create(); // Status: shortlisted
+Application::factory()->rejected()->create();  // Status: rejected
+Application::factory()->forJobPost($job)->create();
+Application::factory()->fromCandidate($candidate)->create();
+```
+
+### JobMatchFactory
+```php
+JobMatch::factory()->create();                // Basic match
+JobMatch::factory()->perfect()->create();     // 90-95 score
+JobMatch::factory()->highMatch()->create();   // 80-95 score
+JobMatch::factory()->mediumMatch()->create(); // 60-79 score
+JobMatch::factory()->lowMatch()->create();    // 40-59 score
+```
+
+## Seeders
+
+### Interactive Seeding (Recommended)
+```bash
+sail artisan db:seed
+```
+
+### Individual Seeders
+
+#### DevelopmentSeeder - Small focused dataset
+```bash
+sail artisan db:seed --class=DevelopmentSeeder
+```
+**Creates:**
+- 2 employers, 3 candidates with known credentials
+- 3 job posts with realistic requirements
+- Applications and job matches
+
+**Test Accounts:** (all password: `password`)
+- `employer1@hiresmart.com` - John Employer
+- `employer2@hiresmart.com` - Sarah Manager  
+- `candidate1@hiresmart.com` - Alice Developer (Senior Laravel)
+- `candidate2@hiresmart.com` - Bob Frontend (Junior React)
+- `candidate3@hiresmart.com` - Carol Fullstack (Full Stack)
+
+#### ComprehensiveSeeder - Large realistic dataset
+```bash
+sail artisan db:seed --class=ComprehensiveSeeder
+```
+**Creates:**
+- 15 employers, 82 candidates with diverse skills
+- 45+ job posts with skill requirements
+- Hundreds of applications and job matches
+- Complete skill relationships
+
+#### MaintenanceTestSeeder - Test cleanup commands
+```bash
+sail artisan db:seed --class=MaintenanceTestSeeder
+```
+**Creates:**
+- Unverified users at various ages (8, 10, 15, 30, 45 days old)
+- Recent unverified users (1, 3, 6 days old) - should NOT be cleaned
+- Job posts older than 30 days for archiving tests
+
+**Perfect for testing:**
+- `sail artisan app:remove-unverified-users`
+- `sail artisan jobs:archive-old`
+
+#### EdgeCaseTestSeeder - Boundary conditions
+```bash
+sail artisan db:seed --class=EdgeCaseTestSeeder
+```
+**Creates:**
+- Users/jobs at exact boundary dates (7, 30 days)
+- Special characters, emojis, international names
+- Extreme salary ranges and null values
+- Job matches with scores 0 and 100
+
+#### SkillSeeder - Technical skills database
+```bash
+sail artisan db:seed --class=SkillSeeder
+```
+Creates 100+ technical skills across programming languages, frameworks, databases, and DevOps tools.
+
+## Usage Examples
+
+### Development Setup
+```bash
+sail artisan migrate:fresh --seed  # Choose "development"
+```
+
+### Performance Testing
+```bash
+sail artisan migrate:fresh --seed  # Choose "comprehensive"
+```
+
+### Maintenance Testing
+```bash
+sail artisan db:seed --class=MaintenanceTestSeeder
+sail artisan app:remove-unverified-users  # Test cleanup
+sail artisan jobs:archive-old             # Test archiving
+```
+
+### Custom Data Generation
+```php
+// Create specialized candidate
+$candidate = User::factory()
+    ->candidate()
+    ->senior()
+    ->withLocation('Remote')
+    ->withSalaryExpectation(100000, 150000)
+    ->create(['name' => 'Expert Developer']);
+
+// Assign skills
+$skills = Skill::whereIn('name', ['PHP', 'Laravel', 'React'])->get();
+$candidate->skills()->attach($skills);
+
+// Create matching job
+$job = JobPost::factory()
+    ->senior()
+    ->remote()
+    ->withSalary(110000, 140000)
+    ->create();
+$job->skills()->attach($skills);
+
+// Create perfect match
+JobMatch::factory()->perfect()->forJobPost($job)->forCandidate($candidate)->create();
+```
+
+## Data Relationships
+
+- **Users**: Senior candidates (4-6 skills), Junior candidates (2-4 skills)
+- **Job Posts**: Each requires 3-6 skills matching job titles
+- **Applications**: Candidates apply to 1-5 jobs with realistic cover letters
+- **Matches**: 20% perfect, 30% high, 30% medium, 20% low distribution
+
+## Verification Commands
+
+```bash
+sail artisan tinker
+>>> User::count()                    # Total users
+>>> JobPost::count()                 # Total job posts
+>>> Application::count()             # Total applications
+>>> JobMatch::count()                # Total matches
+>>> DB::table('user_skill')->count() # Skill relationships
+
+# Maintenance test verification
+>>> User::whereNull('email_verified_at')->where('created_at', '<', now()->subDays(7))->count()
+>>> JobPost::where('created_at', '<', now()->subDays(30))->count()
+
+# Edge case verification
+>>> User::where('name', 'like', '%ñ%')->count()  # Special characters
+>>> JobMatch::whereIn('match_score', [0, 100])->count()  # Extreme scores
+```
+
+## Best Practices
+
+- **Development**: Use `DevelopmentSeeder` for daily work (fast, known accounts)
+- **Testing**: Use `ComprehensiveSeeder` for integration tests (large, diverse dataset)
+- **Maintenance**: Use `MaintenanceTestSeeder` to verify cleanup commands
+- **Edge Cases**: Use `EdgeCaseTestSeeder` for comprehensive boundary testing
+- **Production**: Only run `SkillSeeder` (never seed user data in production)
+
+## Troubleshooting
+
+### Common Issues
+```bash
+# Unique constraint violations
+sail artisan migrate:fresh --seed
+
+# Memory issues with large datasets
+sail php -d memory_limit=512M artisan db:seed --class=ComprehensiveSeeder
+
+# Ensure skills exist first
+sail artisan db:seed --class=SkillSeeder
+```
+
+### Environment Detection
+- **Development/Local**: Interactive menu with all options
+- **Production**: Only essential data (admin + skills) 
