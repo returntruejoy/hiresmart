@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\ApplicationRepository;
 use App\Repositories\JobPostRepository;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardService
 {
@@ -30,4 +31,24 @@ class DashboardService
             'applications' => $this->applicationRepository->count(),
         ];
     }
-} 
+
+    public function getEmployerStats(int $employerId): array
+    {
+        $cacheKey = "employer_stats_{$employerId}";
+        $cacheTtl = 300; // 5 minutes
+
+        return Cache::remember($cacheKey, $cacheTtl, function () use ($employerId) {
+            return [
+                'total_applications' => $this->applicationRepository->countForEmployer($employerId),
+                'total_job_posts' => $this->jobPostRepository->getForEmployer($employerId)->count(),
+                // Add more stats here in the future
+            ];
+        });
+    }
+
+    public function clearEmployerStatsCache(int $employerId): void
+    {
+        $cacheKey = "employer_stats_{$employerId}";
+        Cache::forget($cacheKey);
+    }
+}

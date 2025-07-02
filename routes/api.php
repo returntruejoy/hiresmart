@@ -82,6 +82,7 @@ Route::prefix('v1')->group(function () {
             Route::put('job-posts/{job_post}', [JobPostController::class, 'update'])->name('job-posts.update');
             Route::delete('job-posts/{job_post}', [JobPostController::class, 'destroy'])->name('job-posts.destroy');
             Route::get('job-posts/{job_post}/applications', [ApplicationController::class, 'index'])->name('job-posts.applications.index');
+            Route::get('employer/stats', [DashboardController::class, 'employerStats'])->name('employer.stats');
         });
 
         // Candidate Routes

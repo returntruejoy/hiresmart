@@ -47,4 +47,11 @@ class ApplicationRepository
     {
         return $this->model->count();
     }
+
+    public function countForEmployer(int $employerId): int
+    {
+        return $this->model->whereHas('jobPost', function ($query) use ($employerId) {
+            $query->where('employer_id', $employerId);
+        })->count();
+    }
 }
