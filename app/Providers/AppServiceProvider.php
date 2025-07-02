@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Console\Scheduling\Schedule;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->app->booted(function () {
+            $schedule = $this->app->make(Schedule::class);
+            
+            // Archive old job posts daily at 2:00 AM
+            $schedule->command('app:archive-old-job-posts')
+                    ->daily()
+                    ->at('02:00')
+                    ->appendOutputTo(storage_path('logs/job-archiving.log'));
+        });
     }
 }
