@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         // Call the UserSeeder to create the default admin user.
         $this->call([
             UserSeeder::class,
+            MatchingTestDataSeeder::class,
         ]);
 
         // You can add other seeders here in the future.
