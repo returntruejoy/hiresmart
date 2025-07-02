@@ -33,8 +33,15 @@ class JobPostController extends Controller
      */
     public function index(Request $request)
     {
-        $jobPosts = $this->jobPostService->searchJobPosts($request->all());
-        return JobPostResource::collection($jobPosts);
+        $user = $request->user();
+        
+        if ($user && $user->isEmployer()) {
+            $jobs = $this->jobPostService->getJobsByEmployer($user->id);
+        } else {
+            $jobs = $this->jobPostService->getAllActiveJobs();
+        }
+        
+        return JobPostResource::collection($jobs);
     }
 
     /**
@@ -51,7 +58,7 @@ class JobPostController extends Controller
      */
     public function show(JobPost $jobPost)
     {
-        return new JobPostResource($jobPost);
+        return new JobPostResource($jobPost->load('skills'));
     }
 
     /**

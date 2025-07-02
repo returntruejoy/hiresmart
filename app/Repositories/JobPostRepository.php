@@ -70,4 +70,9 @@ class JobPostRepository
     {
         return $this->model->count();
     }
+
+    public function getAllActive()
+    {
+        return $this->model->where('is_active', true)->latest()->get();
+    }
 } 

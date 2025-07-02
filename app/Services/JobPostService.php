@@ -53,4 +53,9 @@ class JobPostService
     {
         return $this->jobPostRepository->find($id);
     }
+
+    public function getAllActiveJobs()
+    {
+        return $this->jobPostRepository->getAllActive();
+    }
 }

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\JobMatch;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Collection;
+use App\Notifications\CandidateHighMatchNotification;
 
 class JobMatchingService
 {
@@ -56,8 +57,8 @@ class JobMatchingService
         );
 
         if ($scoreResult['total_score'] >= self::MATCH_THRESHOLD) {
-            // Here you would dispatch a notification job
-            Log::info("High match found for Job #{$job->id} ({$job->title}) and Candidate #{$candidate->id} ({$candidate->name}). Score: {$scoreResult['total_score']}");
+            $candidate->notify(new CandidateHighMatchNotification($match));
+            Log::info("High match notification queued for Job #{$job->id} and Candidate #{$candidate->id}. Score: {$scoreResult['total_score']}");
         }
     }
 
