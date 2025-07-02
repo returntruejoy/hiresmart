@@ -10,6 +10,7 @@ use App\Models\JobPost;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Cache;
 
 class JobPostController extends Controller
 {
@@ -88,5 +89,31 @@ class JobPostController extends Controller
         Gate::authorize('delete', $jobPost);
         $this->jobPostService->deleteJobPost($jobPost->id);
         return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Get cache statistics for debugging
+     */
+    public function cacheStats()
+    {
+        $stats = $this->jobPostService->getCacheStats();
+        
+        return response()->json([
+            'cache_stats' => $stats,
+            'timestamp' => now()->toISOString(),
+        ]);
+    }
+
+    /**
+     * Clear the job listings cache manually
+     */
+    public function clearCache()
+    {
+        Cache::forget('recent_job_listings');
+        
+        return response()->json([
+            'message' => 'Job listings cache cleared successfully',
+            'timestamp' => now()->toISOString(),
+        ]);
     }
 } 

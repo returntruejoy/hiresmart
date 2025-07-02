@@ -70,6 +70,8 @@ Route::prefix('v1')->group(function () {
     // Public Job Post Routes
     Route::get('job-posts', [JobPostController::class, 'index'])->name('job-posts.index');
     Route::get('job-posts/{job_post}', [JobPostController::class, 'show'])->name('job-posts.show');
+    Route::get('job-posts/cache/stats', [JobPostController::class, 'cacheStats'])->name('job-posts.cache.stats');
+    Route::post('job-posts/cache/clear', [JobPostController::class, 'clearCache'])->name('job-posts.cache.clear');
 
     // Authenticated Routes
     Route::middleware('auth:api')->group(function () {
