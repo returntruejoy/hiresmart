@@ -23,7 +23,7 @@ class Application extends Model
         'job_post_id',
         'candidate_id',
         'status',
-        'cover_letter', // Optional
+        'cover_letter',
     ];
 
     /**

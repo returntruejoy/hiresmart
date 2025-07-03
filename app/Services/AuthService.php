@@ -18,12 +18,11 @@ class AuthService
      */
     public function login(array $credentials): ?string
     {
-        // The 'attempt' method will verify credentials and return a token on success.
         if (!$token = JWTAuth::attempt($credentials)) {
             Log::warning('Login attempt failed for email.', [
                 'email' => $credentials['email'] ?? 'not_provided'
             ]);
-            return null; // Indicates failed authentication.
+            return null;
         }
 
         $user = JWTAuth::user();
@@ -47,8 +46,6 @@ class AuthService
                 Log::info('User logged out successfully.', ['user_id' => $user->id]);
             }
         } catch (JWTException $e) {
-            // This can happen if the token is already invalid or expired.
-            // We can log this, but the user is effectively logged out, so no need to re-throw.
             Log::error('Error during JWT logout.', [
                 'message' => $e->getMessage(),
                 'user_id' => $user->id ?? 'unknown'
@@ -75,10 +72,8 @@ class AuthService
     public function getAuthenticatedUser(): ?User
     {
         try {
-            // This will parse the token from the request, validate it, and return the user.
             return JWTAuth::parseToken()->authenticate();
         } catch (JWTException $e) {
-            // This catches errors like token not provided, expired, or invalid.
             return null;
         }
     }
@@ -94,7 +89,7 @@ class AuthService
         return [
             'token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60, // expires_in should be in seconds
+            'expires_in' => config('jwt.ttl') * 60,
             'user' => new UserResource(auth()->user())
         ];
     }

@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-            'role' => User::ROLE_CANDIDATE, // Default role
+            'role' => User::ROLE_CANDIDATE,
             'location_preference' => fake()->city(),
             'salary_expectation_min' => fake()->numberBetween(30000, 80000),
             'salary_expectation_max' => fake()->numberBetween(90000, 150000),

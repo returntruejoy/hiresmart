@@ -35,13 +35,12 @@ class DashboardService
     public function getEmployerStats(int $employerId): array
     {
         $cacheKey = "employer_stats_{$employerId}";
-        $cacheTtl = 300; // 5 minutes
+        $cacheTtl = 300;
 
         return Cache::remember($cacheKey, $cacheTtl, function () use ($employerId) {
             return [
                 'total_applications' => $this->applicationRepository->countForEmployer($employerId),
                 'total_job_posts' => $this->jobPostRepository->getForEmployer($employerId)->count(),
-                // Add more stats here in the future
             ];
         });
     }

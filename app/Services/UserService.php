@@ -46,10 +46,8 @@ class UserService
         try {
             $user = $this->userRepository->create($data);
 
-            // Send welcome email based on role
             $this->sendWelcomeEmail($user);
 
-            // Log user creation
             \Log::info('User created', [
                 'user_id' => $user->id,
                 'email' => $user->email,

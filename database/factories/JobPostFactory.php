@@ -74,8 +74,7 @@ class JobPostFactory extends Factory
             'location' => fake()->randomElement($locations),
             'salary_min' => $salaryMin,
             'salary_max' => $salaryMax,
-            'is_active' => fake()->boolean(85), // 85% chance of being active
-        ];
+            'is_active' => fake()->boolean(85),
     }
 
     /**

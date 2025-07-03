@@ -37,13 +37,11 @@ class RegistrationController extends Controller
     public function register(RegistrationRequest $request): JsonResponse
     {
         try {
-            // Create user using the service layer
             $user = $this->userService->createUser($request->validated());
 
             // Generate JWT token for the user
             $token = JWTAuth::fromUser($user);
 
-            // Log successful registration
             Log::info('User registered successfully', [
                 'user_id' => $user->id,
                 'email' => $user->email,
@@ -58,7 +56,7 @@ class RegistrationController extends Controller
                     'user' => new UserResource($user),
                     'token' => $token,
                     'token_type' => 'bearer',
-                    'expires_in' => config('jwt.ttl') * 60 // Convert minutes to seconds
+                    'expires_in' => config('jwt.ttl') * 60
                 ]
             ], 201);
 

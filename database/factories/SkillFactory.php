@@ -18,34 +18,15 @@ class SkillFactory extends Factory
     public function definition(): array
     {
         $skills = [
-            // Programming Languages
             'PHP', 'JavaScript', 'Python', 'Java', 'C#', 'Ruby', 'Go', 'TypeScript', 'Swift', 'Kotlin',
-            
-            // Web Frameworks
-            'Laravel', 'React', 'Vue.js', 'Angular', 'Node.js', 'Express.js', 'Django', 'Flask', 'Spring Boot',
-            
-            // Databases
+            'Laravel', 'React', 'Vue.js', 'Angular', 'Node.js', 'Express.js', 'Django', 'Flask', 'Spring Boot',            
             'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'SQLite', 'Oracle', 'SQL Server',
-            
-            // Cloud & DevOps
-            'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'GitLab CI', 'Terraform',
-            
-            // Frontend Technologies
+            'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'GitLab CI', 'Terraform',            
             'HTML5', 'CSS3', 'SASS', 'Bootstrap', 'Tailwind CSS', 'jQuery', 'Webpack', 'Vite',
-            
-            // Mobile Development
-            'React Native', 'Flutter', 'iOS Development', 'Android Development',
-            
-            // Tools & Technologies
+            'React Native', 'Flutter', 'iOS Development', 'Android Development',            
             'Git', 'Linux', 'Nginx', 'Apache', 'Elasticsearch', 'GraphQL', 'REST APIs', 'Microservices',
-            
-            // Testing
             'PHPUnit', 'Jest', 'Cypress', 'Selenium', 'Unit Testing', 'Integration Testing',
-            
-            // Design & UI/UX
             'Figma', 'Adobe XD', 'Photoshop', 'Illustrator', 'UI Design', 'UX Research',
-            
-            // Data & Analytics
             'SQL', 'Data Analysis', 'Machine Learning', 'TensorFlow', 'Pandas', 'NumPy'
         ];
 

@@ -107,12 +107,12 @@ class JobMatchingService
         $candidateMax = $candidate->salary_expectation_max;
 
         if (is_null($candidateMin) || is_null($candidateMax) || is_null($jobMin) || is_null($jobMax)) {
-            return 50; // Neutral score if data is missing
+            return 50;
         }
         
         // Check for overlap
         if ($candidateMax < $jobMin || $candidateMin > $jobMax) {
-            return 0; // No overlap
+            return 0;
         }
 
         // Favorable if candidate expectation is within or below job range
@@ -122,12 +122,12 @@ class JobMatchingService
 
         // Less favorable if candidate max expectation exceeds job max
         $diff = $candidateMax - $jobMax;
-        $range = $jobMax * 0.2; // 20% buffer
+        $range = $jobMax * 0.2;
         if ($diff > $range) {
-            return 25; // Significantly outside range
+            return 25;
         }
         
-        return 100 - (($diff / $range) * 75); // Scale score down based on how far it is
+        return 100 - (($diff / $range) * 75);
     }
 
     private function calculateLocationScore(JobPost $job, User $candidate): float

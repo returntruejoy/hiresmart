@@ -62,7 +62,6 @@ class RemoveUnverifiedUsers extends Command
 
         $this->info("Successfully removed {$removedCount} unverified user(s).");
 
-        // Log the action with details
         Log::info("Unverified users cleanup completed", [
             'removed_count' => $removedCount,
             'cutoff_date' => $cutoffDate->format('Y-m-d'),

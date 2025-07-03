@@ -48,10 +48,9 @@ class CreateAdminUser extends Command
             'email' => $email,
             'password' => $password,
             'password_confirmation' => $password_confirmation,
-            'role' => User::ROLE_ADMIN, // Hardcode the role to admin
+            'role' => User::ROLE_ADMIN,
         ];
-
-        // --- Validation ---
+        
         $validator = Validator::make($userData, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -64,10 +63,9 @@ class CreateAdminUser extends Command
             foreach ($validator->errors()->all() as $error) {
                 $this->error($error);
             }
-            return 1; // Return a non-zero exit code for failure
+            return 1;
         }
 
-        // --- User Creation ---
         try {
             User::create([
                 'name' => $userData['name'],
@@ -86,6 +84,6 @@ class CreateAdminUser extends Command
             return 1;
         }
 
-        return 0; // Return zero for success
+        return 0;
     }
 }
