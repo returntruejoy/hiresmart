@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,6 +16,7 @@ class UserSeeder extends Seeder
         // Check if an admin user already exists to prevent duplication.
         if (User::where('role', User::ROLE_ADMIN)->exists()) {
             $this->command->info('An admin user already exists. Skipping creation.');
+
             return;
         }
 

@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
+use App\Models\JobPost;
 use App\Models\Skill;
 use App\Models\User;
-use App\Models\JobPost;
+use Illuminate\Database\Seeder;
 
 class MatchingTestDataSeeder extends Seeder
 {
@@ -78,7 +78,7 @@ class MatchingTestDataSeeder extends Seeder
             'salary_expectation_max' => 110000,
         ]);
         $candidate3->skills()->attach($skills->whereIn('name', ['JavaScript', 'Vue.js'])->pluck('id'));
-        
+
         $candidate4 = User::factory()->create([
             'name' => 'David WrongLocation',
             'email' => 'david@example.com',
@@ -89,4 +89,4 @@ class MatchingTestDataSeeder extends Seeder
         ]);
         $candidate4->skills()->attach($skills->whereIn('name', ['PHP', 'Laravel', 'PostgreSQL'])->pluck('id'));
     }
-} 
+}

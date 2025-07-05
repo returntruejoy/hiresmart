@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\JobMatch;
 use App\Models\JobPost;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,7 +19,7 @@ class JobMatchFactory extends Factory
     public function definition(): array
     {
         $matchScore = fake()->numberBetween(40, 95);
-        
+
         return [
             'job_post_id' => JobPost::factory(),
             'candidate_id' => User::factory()->candidate(),
@@ -45,10 +44,10 @@ class JobMatchFactory extends Factory
             'location_match' => $locationScore,
             'overall_score' => $score,
             'matched_skills' => fake()->randomElements([
-                'PHP', 'Laravel', 'JavaScript', 'React', 'MySQL', 'Git', 'Docker'
+                'PHP', 'Laravel', 'JavaScript', 'React', 'MySQL', 'Git', 'Docker',
             ], fake()->numberBetween(2, 5)),
             'missing_skills' => fake()->randomElements([
-                'AWS', 'Kubernetes', 'Vue.js', 'PostgreSQL', 'Redis'
+                'AWS', 'Kubernetes', 'Vue.js', 'PostgreSQL', 'Redis',
             ], fake()->numberBetween(0, 3)),
             'notes' => $this->generateMatchNotes($score),
         ];
@@ -76,7 +75,7 @@ class JobMatchFactory extends Factory
     public function highMatch(): static
     {
         $score = fake()->numberBetween(80, 95);
-        
+
         return $this->state(fn (array $attributes) => [
             'match_score' => $score,
             'match_details' => $this->generateMatchDetails($score),
@@ -90,7 +89,7 @@ class JobMatchFactory extends Factory
     public function mediumMatch(): static
     {
         $score = fake()->numberBetween(60, 79);
-        
+
         return $this->state(fn (array $attributes) => [
             'match_score' => $score,
             'match_details' => $this->generateMatchDetails($score),
@@ -103,7 +102,7 @@ class JobMatchFactory extends Factory
     public function lowMatch(): static
     {
         $score = fake()->numberBetween(40, 59);
-        
+
         return $this->state(fn (array $attributes) => [
             'match_score' => $score,
             'match_details' => $this->generateMatchDetails($score),
@@ -166,7 +165,7 @@ class JobMatchFactory extends Factory
     public function perfect(): static
     {
         $score = fake()->numberBetween(90, 95);
-        
+
         return $this->state(fn (array $attributes) => [
             'match_score' => $score,
             'match_details' => [
@@ -181,4 +180,4 @@ class JobMatchFactory extends Factory
             'status' => 'pending',
         ]);
     }
-} 
+}

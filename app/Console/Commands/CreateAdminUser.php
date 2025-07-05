@@ -33,6 +33,7 @@ class CreateAdminUser extends Command
         if (User::where('role', User::ROLE_ADMIN)->exists()) {
             $this->error('An admin user already exists. To enforce the single-admin rule, a new one cannot be created.');
             $this->comment('If you need to replace the admin, please remove the existing one from the database first.');
+
             return 1;
         }
 
@@ -50,7 +51,7 @@ class CreateAdminUser extends Command
             'password_confirmation' => $password_confirmation,
             'role' => User::ROLE_ADMIN,
         ];
-        
+
         $validator = Validator::make($userData, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -63,6 +64,7 @@ class CreateAdminUser extends Command
             foreach ($validator->errors()->all() as $error) {
                 $this->error($error);
             }
+
             return 1;
         }
 
@@ -75,12 +77,13 @@ class CreateAdminUser extends Command
             ]);
 
             $this->info('Admin user created successfully!');
-            $this->comment('Name: ' . $userData['name']);
-            $this->comment('Email: ' . $userData['email']);
+            $this->comment('Name: '.$userData['name']);
+            $this->comment('Email: '.$userData['email']);
 
         } catch (\Exception $e) {
             $this->error('An error occurred while creating the admin user:');
             $this->error($e->getMessage());
+
             return 1;
         }
 

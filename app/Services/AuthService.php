@@ -5,23 +5,24 @@ namespace App\Services;
 use App\Http\Resources\Api\V1\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
 {
     /**
      * Attempt to authenticate a user and return a JWT token if successful.
      *
-     * @param array $credentials The user's credentials (email and password).
+     * @param  array  $credentials  The user's credentials (email and password).
      * @return string|null The JWT token on success, null on failure.
      */
     public function login(array $credentials): ?string
     {
-        if (!$token = JWTAuth::attempt($credentials)) {
+        if (! $token = JWTAuth::attempt($credentials)) {
             Log::warning('Login attempt failed for email.', [
-                'email' => $credentials['email'] ?? 'not_provided'
+                'email' => $credentials['email'] ?? 'not_provided',
             ]);
+
             return null;
         }
 
@@ -33,8 +34,6 @@ class AuthService
 
     /**
      * Log the currently authenticated user out by invalidating their token.
-     *
-     * @return void
      */
     public function logout(): void
     {
@@ -48,7 +47,7 @@ class AuthService
         } catch (JWTException $e) {
             Log::error('Error during JWT logout.', [
                 'message' => $e->getMessage(),
-                'user_id' => $user->id ?? 'unknown'
+                'user_id' => $user->id ?? 'unknown',
             ]);
         }
     }
@@ -57,6 +56,7 @@ class AuthService
      * Refresh the token for the currently authenticated user.
      *
      * @return string The new JWT token.
+     *
      * @throws JWTException
      */
     public function refresh(): string
@@ -81,7 +81,7 @@ class AuthService
     /**
      * Create a structured response array for a successful authentication.
      *
-     * @param string $token The JWT token.
+     * @param  string  $token  The JWT token.
      * @return array The structured token response.
      */
     public function respondWithToken(string $token): array
@@ -90,7 +90,7 @@ class AuthService
             'token' => $token,
             'token_type' => 'bearer',
             'expires_in' => config('jwt.ttl') * 60,
-            'user' => new UserResource(auth()->user())
+            'user' => new UserResource(auth()->user()),
         ];
     }
-} 
+}

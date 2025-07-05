@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->command->info('Starting HireSmart Database Seeding...');
-        
+
         // Always seed the default admin user first
         $this->call([
             UserSeeder::class,
@@ -20,10 +20,10 @@ class DatabaseSeeder extends Seeder
 
         // Check environment or ask for seeding preference
         $environment = app()->environment();
-        
+
         if ($environment === 'local' || $environment === 'development') {
             $this->command->info('Development environment detected.');
-            
+
             $choice = $this->command->choice(
                 'Which seeding option would you like?',
                 [
@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
                     'edge-case-test' => 'Edge Case Test (Boundary conditions & special cases)',
                     'matching-test' => 'Matching Test (Original algorithm test data)',
                     'skills-only' => 'Skills Only (Just populate skills)',
-                    'custom' => 'Custom (Choose individual seeders)'
+                    'custom' => 'Custom (Choose individual seeders)',
                 ],
                 'development'
             );
@@ -42,30 +42,30 @@ class DatabaseSeeder extends Seeder
                 case 'development':
                     $this->call([DevelopmentSeeder::class]);
                     break;
-                    
+
                 case 'comprehensive':
                     $this->call([ComprehensiveSeeder::class]);
                     break;
-                    
+
                 case 'maintenance-test':
                     $this->call([MaintenanceTestSeeder::class]);
                     break;
-                    
+
                 case 'edge-case-test':
                     $this->call([EdgeCaseTestSeeder::class]);
                     break;
-                    
+
                 case 'matching-test':
                     $this->call([
                         SkillSeeder::class,
                         MatchingTestDataSeeder::class,
                     ]);
                     break;
-                    
+
                 case 'skills-only':
                     $this->call([SkillSeeder::class]);
                     break;
-                    
+
                 case 'custom':
                     $this->runCustomSeeding();
                     break;

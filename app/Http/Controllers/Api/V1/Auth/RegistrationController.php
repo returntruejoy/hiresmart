@@ -27,7 +27,7 @@ class RegistrationController extends Controller
             'services' => [
                 'userService' => $this->userService ? 'Available' : 'Not Available',
                 'jwt' => class_exists('Tymon\JWTAuth\Facades\JWTAuth') ? 'Available' : 'Not Available',
-            ]
+            ],
         ]);
     }
 
@@ -46,7 +46,7 @@ class RegistrationController extends Controller
                 'user_id' => $user->id,
                 'email' => $user->email,
                 'role' => $user->role,
-                'ip' => $request->ip()
+                'ip' => $request->ip(),
             ]);
 
             return response()->json([
@@ -56,15 +56,15 @@ class RegistrationController extends Controller
                     'user' => new UserResource($user),
                     'token' => $token,
                     'token_type' => 'bearer',
-                    'expires_in' => config('jwt.ttl') * 60
-                ]
+                    'expires_in' => config('jwt.ttl') * 60,
+                ],
             ], 201);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
-                'errors' => $e->errors()
+                'errors' => $e->errors(),
             ], 422);
 
         } catch (\Exception $e) {
@@ -72,7 +72,7 @@ class RegistrationController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'email' => $request->email ?? 'unknown',
-                'ip' => $request->ip()
+                'ip' => $request->ip(),
             ]);
 
             return response()->json([
@@ -80,8 +80,8 @@ class RegistrationController extends Controller
                 'message' => 'Registration failed. Please try again.',
                 'debug_message' => config('app.debug') ? $e->getMessage() : null,
                 'errors' => [
-                    'general' => ['An unexpected error occurred during registration.']
-                ]
+                    'general' => ['An unexpected error occurred during registration.'],
+                ],
             ], 500);
         }
     }
@@ -94,7 +94,7 @@ class RegistrationController extends Controller
         try {
             // Merge employer role into request data
             $userData = array_merge($request->validated(), [
-                'role' => \App\Models\User::ROLE_EMPLOYER
+                'role' => \App\Models\User::ROLE_EMPLOYER,
             ]);
 
             // Create employer user
@@ -106,7 +106,7 @@ class RegistrationController extends Controller
             Log::info('Employer registered successfully', [
                 'user_id' => $user->id,
                 'email' => $user->email,
-                'ip' => $request->ip()
+                'ip' => $request->ip(),
             ]);
 
             return response()->json([
@@ -116,8 +116,8 @@ class RegistrationController extends Controller
                     'user' => new UserResource($user),
                     'token' => $token,
                     'token_type' => 'bearer',
-                    'expires_in' => config('jwt.ttl') * 60
-                ]
+                    'expires_in' => config('jwt.ttl') * 60,
+                ],
             ], 201);
 
         } catch (\Exception $e) {
@@ -125,7 +125,7 @@ class RegistrationController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'email' => $request->email ?? 'unknown',
-                'ip' => $request->ip()
+                'ip' => $request->ip(),
             ]);
 
             return response()->json([
@@ -134,8 +134,8 @@ class RegistrationController extends Controller
                 'debug_message' => config('app.debug') ? $e->getMessage() : null,
                 'debug_trace' => config('app.debug') ? $e->getTraceAsString() : null,
                 'errors' => [
-                    'general' => ['Registration failed: ' . ($e->getMessage() ?: 'Unknown error')]
-                ]
+                    'general' => ['Registration failed: '.($e->getMessage() ?: 'Unknown error')],
+                ],
             ], 500);
         }
     }
@@ -148,7 +148,7 @@ class RegistrationController extends Controller
         try {
             // Merge candidate role into request data
             $userData = array_merge($request->validated(), [
-                'role' => \App\Models\User::ROLE_CANDIDATE
+                'role' => \App\Models\User::ROLE_CANDIDATE,
             ]);
 
             // Create candidate user
@@ -160,7 +160,7 @@ class RegistrationController extends Controller
             Log::info('Candidate registered successfully', [
                 'user_id' => $user->id,
                 'email' => $user->email,
-                'ip' => $request->ip()
+                'ip' => $request->ip(),
             ]);
 
             return response()->json([
@@ -170,8 +170,8 @@ class RegistrationController extends Controller
                     'user' => new UserResource($user),
                     'token' => $token,
                     'token_type' => 'bearer',
-                    'expires_in' => config('jwt.ttl') * 60
-                ]
+                    'expires_in' => config('jwt.ttl') * 60,
+                ],
             ], 201);
 
         } catch (\Exception $e) {
@@ -179,7 +179,7 @@ class RegistrationController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'email' => $request->email ?? 'unknown',
-                'ip' => $request->ip()
+                'ip' => $request->ip(),
             ]);
 
             return response()->json([
@@ -188,8 +188,8 @@ class RegistrationController extends Controller
                 'debug_message' => config('app.debug') ? $e->getMessage() : null,
                 'debug_trace' => config('app.debug') ? $e->getTraceAsString() : null,
                 'errors' => [
-                    'general' => ['Registration failed: ' . ($e->getMessage() ?: 'Unknown error')]
-                ]
+                    'general' => ['Registration failed: '.($e->getMessage() ?: 'Unknown error')],
+                ],
             ], 500);
         }
     }

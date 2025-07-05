@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Services\JobPostService;
 use App\Http\Requests\Api\V1\JobPostRequest;
 use App\Http\Resources\Api\V1\JobPostResource;
 use App\Models\JobPost;
-use Illuminate\Http\Response;
+use App\Services\JobPostService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 
 class JobPostController extends Controller
 {
@@ -21,8 +21,6 @@ class JobPostController extends Controller
 
     /**
      * JobPostController constructor.
-     *
-     * @param JobPostService $jobPostService
      */
     public function __construct(JobPostService $jobPostService)
     {
@@ -35,13 +33,13 @@ class JobPostController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        
+
         if ($user && $user->isEmployer()) {
             $jobs = $this->jobPostService->getJobsByEmployer($user->id);
         } else {
             $jobs = $this->jobPostService->getAllActiveJobs();
         }
-        
+
         return JobPostResource::collection($jobs);
     }
 
@@ -51,6 +49,7 @@ class JobPostController extends Controller
     public function indexForEmployer()
     {
         $jobPosts = $this->jobPostService->getJobPostsForCurrentUser();
+
         return JobPostResource::collection($jobPosts);
     }
 
@@ -68,6 +67,7 @@ class JobPostController extends Controller
     public function store(JobPostRequest $request)
     {
         $jobPost = $this->jobPostService->createJobPost($request->validated());
+
         return new JobPostResource($jobPost);
     }
 
@@ -78,6 +78,7 @@ class JobPostController extends Controller
     {
         Gate::authorize('update', $jobPost);
         $updatedJobPost = $this->jobPostService->updateJobPost($request->validated(), $jobPost->id);
+
         return new JobPostResource($updatedJobPost);
     }
 
@@ -88,6 +89,7 @@ class JobPostController extends Controller
     {
         Gate::authorize('delete', $jobPost);
         $this->jobPostService->deleteJobPost($jobPost->id);
+
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
@@ -97,7 +99,7 @@ class JobPostController extends Controller
     public function cacheStats()
     {
         $stats = $this->jobPostService->getCacheStats();
-        
+
         return response()->json([
             'cache_stats' => $stats,
             'timestamp' => now()->toISOString(),
@@ -110,10 +112,10 @@ class JobPostController extends Controller
     public function clearCache()
     {
         Cache::forget('recent_job_listings');
-        
+
         return response()->json([
             'message' => 'Job listings cache cleared successfully',
             'timestamp' => now()->toISOString(),
         ]);
     }
-} 
+}

@@ -24,7 +24,7 @@ class SkillSeeder extends Seeder
             'TypeScript',
             'Swift',
             'Kotlin',
-            
+
             // Web Frameworks
             'Laravel',
             'React',
@@ -36,7 +36,7 @@ class SkillSeeder extends Seeder
             'Flask',
             'Spring Boot',
             'Symfony',
-            
+
             // Databases
             'MySQL',
             'PostgreSQL',
@@ -46,7 +46,7 @@ class SkillSeeder extends Seeder
             'Oracle',
             'SQL Server',
             'Elasticsearch',
-            
+
             // Cloud & DevOps
             'AWS',
             'Azure',
@@ -58,7 +58,7 @@ class SkillSeeder extends Seeder
             'GitHub Actions',
             'Terraform',
             'Ansible',
-            
+
             // Frontend Technologies
             'HTML5',
             'CSS3',
@@ -70,14 +70,14 @@ class SkillSeeder extends Seeder
             'Vite',
             'Next.js',
             'Nuxt.js',
-            
+
             // Mobile Development
             'React Native',
             'Flutter',
             'iOS Development',
             'Android Development',
             'Xamarin',
-            
+
             // Tools & Technologies
             'Git',
             'Linux',
@@ -89,7 +89,7 @@ class SkillSeeder extends Seeder
             'WebSockets',
             'OAuth',
             'JWT',
-            
+
             // Testing
             'PHPUnit',
             'Jest',
@@ -99,7 +99,7 @@ class SkillSeeder extends Seeder
             'Integration Testing',
             'TDD',
             'BDD',
-            
+
             // Design & UI/UX
             'Figma',
             'Adobe XD',
@@ -109,7 +109,7 @@ class SkillSeeder extends Seeder
             'UX Research',
             'Wireframing',
             'Prototyping',
-            
+
             // Data & Analytics
             'SQL',
             'Data Analysis',
@@ -119,7 +119,7 @@ class SkillSeeder extends Seeder
             'NumPy',
             'Power BI',
             'Tableau',
-            
+
             // Project Management
             'Agile',
             'Scrum',
@@ -127,7 +127,7 @@ class SkillSeeder extends Seeder
             'Jira',
             'Trello',
             'Asana',
-            
+
             // Other Technologies
             'Blockchain',
             'IoT',
@@ -143,4 +143,4 @@ class SkillSeeder extends Seeder
 
         $this->command->info('Skills seeded successfully!');
     }
-} 
+}

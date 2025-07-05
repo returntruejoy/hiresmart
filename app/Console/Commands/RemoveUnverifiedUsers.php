@@ -39,13 +39,15 @@ class RemoveUnverifiedUsers extends Command
 
         if ($usersToRemove === 0) {
             $this->info('No unverified users found to remove.');
+
             return 0;
         }
 
         // Show a warning and ask for confirmation if more than 10 users
         if ($usersToRemove > 10) {
-            if (!$this->confirm("This will remove {$usersToRemove} unverified users. Are you sure?")) {
+            if (! $this->confirm("This will remove {$usersToRemove} unverified users. Are you sure?")) {
                 $this->info('Operation cancelled.');
+
                 return 0;
             }
         }
@@ -62,7 +64,7 @@ class RemoveUnverifiedUsers extends Command
 
         $this->info("Successfully removed {$removedCount} unverified user(s).");
 
-        Log::info("Unverified users cleanup completed", [
+        Log::info('Unverified users cleanup completed', [
             'removed_count' => $removedCount,
             'cutoff_date' => $cutoffDate->format('Y-m-d'),
             'days_threshold' => $days,
@@ -70,9 +72,9 @@ class RemoveUnverifiedUsers extends Command
                 return [
                     'id' => $user->id,
                     'email' => $user->email,
-                    'created_at' => $user->created_at->format('Y-m-d H:i:s')
+                    'created_at' => $user->created_at->format('Y-m-d H:i:s'),
                 ];
-            })->toArray()
+            })->toArray(),
         ]);
 
         return 0;

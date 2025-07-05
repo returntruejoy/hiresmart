@@ -165,9 +165,9 @@ class EdgeCaseTestSeeder extends Seeder
         Application::factory()->create([
             'job_post_id' => $jobPost->id,
             'candidate_id' => $candidate->id,
-            'cover_letter' => str_repeat('This is a very long cover letter. ', 100) . 
-                             'I am extremely interested in this position and have written ' .
-                             'an exceptionally long cover letter to demonstrate my enthusiasm. ' .
+            'cover_letter' => str_repeat('This is a very long cover letter. ', 100).
+                             'I am extremely interested in this position and have written '.
+                             'an exceptionally long cover letter to demonstrate my enthusiasm. '.
                              str_repeat('Additional content. ', 50),
             'status' => Application::STATUS_SUBMITTED,
         ]);
@@ -343,7 +343,7 @@ class EdgeCaseTestSeeder extends Seeder
         ];
 
         foreach ($specialSkills as $skillName) {
-            if (!Skill::where('name', $skillName)->exists()) {
+            if (! Skill::where('name', $skillName)->exists()) {
                 Skill::create(['name' => $skillName]);
             }
         }
@@ -422,39 +422,39 @@ class EdgeCaseTestSeeder extends Seeder
     private function printEdgeCaseSummary(): void
     {
         $this->command->info('=== EDGE CASE TEST DATA SUMMARY ===');
-        
+
         // Boundary users
         $boundaryUsers = User::where('email', 'like', '%boundary.test')->count();
         $this->command->info("Boundary Date Users: {$boundaryUsers}");
-        
+
         // Boundary job posts
         $boundaryJobs = JobPost::where('company_name', 'Boundary Test Company')->count();
         $this->command->info("Boundary Date Job Posts: {$boundaryJobs}");
-        
+
         // Edge case applications
-        $edgeCaseApps = Application::whereHas('candidate', function($query) {
+        $edgeCaseApps = Application::whereHas('candidate', function ($query) {
             $query->where('email', 'edgecase@candidate.test');
         })->count();
         $this->command->info("Edge Case Applications: {$edgeCaseApps}");
-        
+
         // Edge case matches
         $edgeCaseMatches = JobMatch::whereIn('match_score', [0, 100])->count();
         $this->command->info("Extreme Score Matches (0 or 100): {$edgeCaseMatches}");
-        
+
         // Special character data
         $specialCharUsers = User::where('name', 'like', '%ñ%')
             ->orWhere('name', 'like', '%ü%')
             ->orWhere('name', 'like', '%é%')
             ->count();
         $this->command->info("Special Character Users: {$specialCharUsers}");
-        
+
         // Salary edge cases
         $extremeSalaryJobs = JobPost::where('salary_min', '<', 1000)
             ->orWhere('salary_max', '>', 500000)
             ->orWhereNull('salary_min')
             ->count();
         $this->command->info("Extreme Salary Job Posts: {$extremeSalaryJobs}");
-        
+
         $this->command->info('');
         $this->command->info('Use this data to test:');
         $this->command->info('- Boundary conditions in cleanup commands');
@@ -463,4 +463,4 @@ class EdgeCaseTestSeeder extends Seeder
         $this->command->info('- Application and match edge cases');
         $this->command->info('=====================================');
     }
-} 
+}

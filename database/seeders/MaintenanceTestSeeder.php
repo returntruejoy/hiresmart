@@ -53,7 +53,7 @@ class MaintenanceTestSeeder extends Seeder
                 ->unverified()
                 ->create([
                     'name' => $userData['name'],
-                    'email' => strtolower(str_replace(' ', '', $userData['name'])) . '@example.com',
+                    'email' => strtolower(str_replace(' ', '', $userData['name'])).'@example.com',
                     'created_at' => Carbon::now()->subDays($userData['days_ago']),
                     'updated_at' => Carbon::now()->subDays($userData['days_ago']),
                 ]);
@@ -72,7 +72,7 @@ class MaintenanceTestSeeder extends Seeder
                 ->unverified()
                 ->create([
                     'name' => $userData['name'],
-                    'email' => strtolower(str_replace(' ', '', $userData['name'])) . '@example.com',
+                    'email' => strtolower(str_replace(' ', '', $userData['name'])).'@example.com',
                     'created_at' => Carbon::now()->subDays($userData['days_ago']),
                     'updated_at' => Carbon::now()->subDays($userData['days_ago']),
                 ]);
@@ -86,12 +86,12 @@ class MaintenanceTestSeeder extends Seeder
 
         foreach ($oldVerifiedUsers as $userData) {
             $role = str_contains($userData['name'], 'Employer') ? 'employer' : 'candidate';
-            
+
             User::factory()
                 ->withRole($role)
                 ->create([
                     'name' => $userData['name'],
-                    'email' => strtolower(str_replace(' ', '', $userData['name'])) . '@example.com',
+                    'email' => strtolower(str_replace(' ', '', $userData['name'])).'@example.com',
                     'email_verified_at' => Carbon::now()->subDays($userData['days_ago'] - 1),
                     'created_at' => Carbon::now()->subDays($userData['days_ago']),
                     'updated_at' => Carbon::now()->subDays($userData['days_ago']),
@@ -225,17 +225,17 @@ class MaintenanceTestSeeder extends Seeder
     private function printMaintenanceSummary(): void
     {
         $this->command->info('=== MAINTENANCE TEST DATA SUMMARY ===');
-        
+
         // Unverified users summary
         $oldUnverified = User::whereNull('email_verified_at')
             ->where('created_at', '<', Carbon::now()->subDays(7))
             ->count();
-        
+
         $recentUnverified = User::whereNull('email_verified_at')
             ->where('created_at', '>=', Carbon::now()->subDays(7))
             ->count();
 
-        $this->command->info("Unverified Users:");
+        $this->command->info('Unverified Users:');
         $this->command->info("- Old (>7 days, should be cleaned): {$oldUnverified}");
         $this->command->info("- Recent (≤7 days, should remain): {$recentUnverified}");
 
@@ -243,14 +243,14 @@ class MaintenanceTestSeeder extends Seeder
         $oldActiveJobs = JobPost::where('is_active', true)
             ->where('created_at', '<', Carbon::now()->subDays(30))
             ->count();
-        
+
         $recentActiveJobs = JobPost::where('is_active', true)
             ->where('created_at', '>=', Carbon::now()->subDays(30))
             ->count();
 
         $alreadyInactiveJobs = JobPost::where('is_active', false)->count();
 
-        $this->command->info("Job Posts:");
+        $this->command->info('Job Posts:');
         $this->command->info("- Old active (>30 days, should be archived): {$oldActiveJobs}");
         $this->command->info("- Recent active (≤30 days, should remain active): {$recentActiveJobs}");
         $this->command->info("- Already inactive: {$alreadyInactiveJobs}");
@@ -261,4 +261,4 @@ class MaintenanceTestSeeder extends Seeder
         $this->command->info('php artisan jobs:archive-old');
         $this->command->info('=====================================');
     }
-} 
+}

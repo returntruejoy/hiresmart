@@ -129,7 +129,7 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'salary_expectation_min' => fake()->numberBetween(80000, 120000),
             'salary_expectation_max' => fake()->numberBetween(130000, 200000),
-            'bio' => 'Senior developer with ' . fake()->numberBetween(5, 15) . ' years of experience. ' . fake()->paragraph(2),
+            'bio' => 'Senior developer with '.fake()->numberBetween(5, 15).' years of experience. '.fake()->paragraph(2),
         ]);
     }
 
@@ -141,7 +141,7 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'salary_expectation_min' => fake()->numberBetween(25000, 50000),
             'salary_expectation_max' => fake()->numberBetween(55000, 80000),
-            'bio' => 'Junior developer eager to learn and grow. ' . fake()->paragraph(2),
+            'bio' => 'Junior developer eager to learn and grow. '.fake()->paragraph(2),
         ]);
     }
 }

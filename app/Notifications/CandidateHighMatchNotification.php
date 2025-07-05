@@ -39,13 +39,13 @@ class CandidateHighMatchNotification extends Notification implements ShouldQueue
         $score = $this->match->match_score;
 
         return (new MailMessage)
-                    ->subject("You're a great match for a new job!")
-                    ->greeting("Hi {$notifiable->name},")
-                    ->line("We found a new job opportunity that looks like a great fit for you (Match Score: {$score}%).")
-                    ->line("Job Title: **{$jobPost->title}** at **{$jobPost->company_name}**")
-                    ->line("Location: **{$jobPost->location}**")
-                    ->action('View Job & Apply', url('/api/v1/job-posts/' . $jobPost->id))
-                    ->line('Thank you for using HireSmart!');
+            ->subject("You're a great match for a new job!")
+            ->greeting("Hi {$notifiable->name},")
+            ->line("We found a new job opportunity that looks like a great fit for you (Match Score: {$score}%).")
+            ->line("Job Title: **{$jobPost->title}** at **{$jobPost->company_name}**")
+            ->line("Location: **{$jobPost->location}**")
+            ->action('View Job & Apply', url('/api/v1/job-posts/'.$jobPost->id))
+            ->line('Thank you for using HireSmart!');
     }
 
     /**

@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Services\JobMatchingService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use App\Services\JobMatchingService;
 
 class RunJobMatching implements ShouldQueue
 {

@@ -10,8 +10,11 @@ class Application extends Model
     use HasFactory;
 
     public const STATUS_SUBMITTED = 'submitted';
+
     public const STATUS_VIEWED = 'viewed';
+
     public const STATUS_SHORTLISTED = 'shortlisted';
+
     public const STATUS_REJECTED = 'rejected';
 
     /**

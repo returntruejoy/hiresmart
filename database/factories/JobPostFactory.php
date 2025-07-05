@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\JobPost;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -33,7 +32,7 @@ class JobPostFactory extends Factory
             'JavaScript Developer',
             'Software Architect',
             'Technical Lead',
-            'Junior Web Developer'
+            'Junior Web Developer',
         ];
 
         $companies = [
@@ -46,7 +45,7 @@ class JobPostFactory extends Factory
             'DataDriven Analytics',
             'CloudFirst Solutions',
             'Agile Innovations',
-            'StartupHub Ventures'
+            'StartupHub Ventures',
         ];
 
         $locations = [
@@ -59,7 +58,7 @@ class JobPostFactory extends Factory
             'Denver, CO',
             'Los Angeles, CA',
             'Miami, FL',
-            'Remote'
+            'Remote',
         ];
 
         $salaryMin = fake()->numberBetween(50000, 120000);
@@ -75,6 +74,7 @@ class JobPostFactory extends Factory
             'salary_min' => $salaryMin,
             'salary_max' => $salaryMax,
             'is_active' => fake()->boolean(85),
+        ];
     }
 
     /**
@@ -90,7 +90,7 @@ class JobPostFactory extends Factory
             'Troubleshoot and debug applications',
             'Optimize applications for maximum speed and scalability',
             'Stay up-to-date with emerging technologies and industry trends',
-            'Mentor junior developers and provide technical guidance'
+            'Mentor junior developers and provide technical guidance',
         ];
 
         $requirements = [
@@ -100,16 +100,16 @@ class JobPostFactory extends Factory
             'Experience with version control systems (Git)',
             'Knowledge of database design and SQL',
             'Understanding of software development lifecycle',
-            'Ability to work in an agile development environment'
+            'Ability to work in an agile development environment',
         ];
 
         $selectedResponsibilities = fake()->randomElements($responsibilities, fake()->numberBetween(4, 6));
         $selectedRequirements = fake()->randomElements($requirements, fake()->numberBetween(3, 5));
 
-        return "**Responsibilities:**\n" . 
-               implode("\n", array_map(fn($item) => "• $item", $selectedResponsibilities)) . 
-               "\n\n**Requirements:**\n" . 
-               implode("\n", array_map(fn($item) => "• $item", $selectedRequirements));
+        return "**Responsibilities:**\n".
+               implode("\n", array_map(fn ($item) => "• $item", $selectedResponsibilities)).
+               "\n\n**Requirements:**\n".
+               implode("\n", array_map(fn ($item) => "• $item", $selectedRequirements));
     }
 
     /**
@@ -174,7 +174,7 @@ class JobPostFactory extends Factory
             'Principal Engineer',
             'Software Architect',
             'Technical Lead',
-            'Senior Full Stack Developer'
+            'Senior Full Stack Developer',
         ];
 
         return $this->state(fn (array $attributes) => [
@@ -194,7 +194,7 @@ class JobPostFactory extends Factory
             'Entry Level Software Engineer',
             'Associate Developer',
             'Junior Web Developer',
-            'Graduate Software Developer'
+            'Graduate Software Developer',
         ];
 
         return $this->state(fn (array $attributes) => [
@@ -213,4 +213,4 @@ class JobPostFactory extends Factory
             'location' => 'Remote',
         ]);
     }
-} 
+}

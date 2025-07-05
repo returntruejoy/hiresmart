@@ -2,12 +2,11 @@
 
 namespace App\Services;
 
-use App\Repositories\ApplicationRepository;
 use App\Models\Application;
 use App\Models\JobPost;
+use App\Repositories\ApplicationRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use App\Services\DashboardService;
 
 class ApplicationService
 {
@@ -23,9 +22,6 @@ class ApplicationService
 
     /**
      * ApplicationService constructor.
-     *
-     * @param ApplicationRepository $applicationRepository
-     * @param DashboardService $dashboardService
      */
     public function __construct(
         ApplicationRepository $applicationRepository,
@@ -48,7 +44,7 @@ class ApplicationService
 
         if ($existingApplication) {
             throw ValidationException::withMessages([
-                'job_post_id' => 'You have already applied for this job.'
+                'job_post_id' => 'You have already applied for this job.',
             ]);
         }
 
@@ -68,4 +64,4 @@ class ApplicationService
 
         return $application;
     }
-} 
+}

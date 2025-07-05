@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\JobMatch;
 use App\Models\JobPost;
 use App\Models\User;
-use App\Models\JobMatch;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Collection;
 use App\Notifications\CandidateHighMatchNotification;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 class JobMatchingService
 {
@@ -20,6 +20,7 @@ class JobMatchingService
 
         if ($activeJobs->isEmpty() || $candidates->isEmpty()) {
             Log::info('Job Matching: No active jobs or candidates to match.');
+
             return;
         }
 
@@ -109,7 +110,7 @@ class JobMatchingService
         if (is_null($candidateMin) || is_null($candidateMax) || is_null($jobMin) || is_null($jobMax)) {
             return 50;
         }
-        
+
         // Check for overlap
         if ($candidateMax < $jobMin || $candidateMin > $jobMax) {
             return 0;
@@ -126,7 +127,7 @@ class JobMatchingService
         if ($diff > $range) {
             return 25;
         }
-        
+
         return 100 - (($diff / $range) * 75);
     }
 

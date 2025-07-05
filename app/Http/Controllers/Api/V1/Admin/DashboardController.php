@@ -18,6 +18,7 @@ class DashboardController extends Controller
     public function index()
     {
         $metrics = $this->dashboardService->getMetrics();
+
         return response()->json(['data' => $metrics]);
     }
 
@@ -25,6 +26,7 @@ class DashboardController extends Controller
     {
         $employerId = $request->user()->id;
         $stats = $this->dashboardService->getEmployerStats($employerId);
+
         return response()->json($stats);
     }
 }

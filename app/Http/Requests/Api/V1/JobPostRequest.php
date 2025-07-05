@@ -31,4 +31,4 @@ class JobPostRequest extends FormRequest
             'salary_max' => 'nullable|numeric|min:0',
         ];
     }
-} 
+}

@@ -16,7 +16,9 @@ class User extends Authenticatable implements JWTSubject
 
     // Role constants
     public const ROLE_ADMIN = 'admin';
+
     public const ROLE_EMPLOYER = 'employer';
+
     public const ROLE_CANDIDATE = 'candidate';
 
     /**
@@ -93,7 +95,7 @@ class User extends Authenticatable implements JWTSubject
     {
         $this->role = $role;
         $this->save();
-        
+
         return $this;
     }
 
@@ -113,7 +115,7 @@ class User extends Authenticatable implements JWTSubject
         return [
             'role' => $this->role,
             'email' => $this->email,
-            'name' => $this->name
+            'name' => $this->name,
         ];
     }
 

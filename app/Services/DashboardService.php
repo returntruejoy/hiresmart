@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Cache;
 class DashboardService
 {
     protected $userRepository;
+
     protected $jobPostRepository;
+
     protected $applicationRepository;
 
     public function __construct(

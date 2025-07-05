@@ -19,15 +19,15 @@ class SkillFactory extends Factory
     {
         $skills = [
             'PHP', 'JavaScript', 'Python', 'Java', 'C#', 'Ruby', 'Go', 'TypeScript', 'Swift', 'Kotlin',
-            'Laravel', 'React', 'Vue.js', 'Angular', 'Node.js', 'Express.js', 'Django', 'Flask', 'Spring Boot',            
+            'Laravel', 'React', 'Vue.js', 'Angular', 'Node.js', 'Express.js', 'Django', 'Flask', 'Spring Boot',
             'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'SQLite', 'Oracle', 'SQL Server',
-            'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'GitLab CI', 'Terraform',            
+            'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'GitLab CI', 'Terraform',
             'HTML5', 'CSS3', 'SASS', 'Bootstrap', 'Tailwind CSS', 'jQuery', 'Webpack', 'Vite',
-            'React Native', 'Flutter', 'iOS Development', 'Android Development',            
+            'React Native', 'Flutter', 'iOS Development', 'Android Development',
             'Git', 'Linux', 'Nginx', 'Apache', 'Elasticsearch', 'GraphQL', 'REST APIs', 'Microservices',
             'PHPUnit', 'Jest', 'Cypress', 'Selenium', 'Unit Testing', 'Integration Testing',
             'Figma', 'Adobe XD', 'Photoshop', 'Illustrator', 'UI Design', 'UX Research',
-            'SQL', 'Data Analysis', 'Machine Learning', 'TensorFlow', 'Pandas', 'NumPy'
+            'SQL', 'Data Analysis', 'Machine Learning', 'TensorFlow', 'Pandas', 'NumPy',
         ];
 
         return [
@@ -41,7 +41,7 @@ class SkillFactory extends Factory
     public function programmingLanguage(): static
     {
         $languages = ['PHP', 'JavaScript', 'Python', 'Java', 'C#', 'Ruby', 'Go', 'TypeScript'];
-        
+
         return $this->state(fn (array $attributes) => [
             'name' => fake()->randomElement($languages),
         ]);
@@ -53,7 +53,7 @@ class SkillFactory extends Factory
     public function webFramework(): static
     {
         $frameworks = ['Laravel', 'React', 'Vue.js', 'Angular', 'Node.js', 'Django', 'Flask'];
-        
+
         return $this->state(fn (array $attributes) => [
             'name' => fake()->randomElement($frameworks),
         ]);
@@ -65,7 +65,7 @@ class SkillFactory extends Factory
     public function database(): static
     {
         $databases = ['MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'SQLite'];
-        
+
         return $this->state(fn (array $attributes) => [
             'name' => fake()->randomElement($databases),
         ]);
@@ -77,9 +77,9 @@ class SkillFactory extends Factory
     public function cloudDevOps(): static
     {
         $cloudSkills = ['AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins'];
-        
+
         return $this->state(fn (array $attributes) => [
             'name' => fake()->randomElement($cloudSkills),
         ]);
     }
-} 
+}

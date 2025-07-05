@@ -21,9 +21,9 @@ class ApplicationFactory extends Factory
     {
         $coverLetterTemplates = [
             "Dear Hiring Manager,\n\nI am writing to express my strong interest in this position. With my background in software development and passion for creating innovative solutions, I believe I would be a valuable addition to your team.\n\nI have experience working with modern technologies and am excited about the opportunity to contribute to your company's success.\n\nThank you for considering my application.\n\nBest regards,",
-            
+
             "Hello,\n\nI am excited to apply for this role as it aligns perfectly with my career goals and technical expertise. My experience in web development and collaborative work environments has prepared me well for this opportunity.\n\nI am particularly drawn to your company's mission and would love to discuss how my skills can contribute to your team's objectives.\n\nLooking forward to hearing from you.",
-            
+
             "Dear Team,\n\nI am enthusiastic about the opportunity to join your organization. My technical background and problem-solving abilities make me well-suited for this position.\n\nI am eager to bring my skills and fresh perspective to your team and contribute to meaningful projects.\n\nThank you for your time and consideration.",
         ];
 
@@ -34,7 +34,7 @@ class ApplicationFactory extends Factory
                 Application::STATUS_SUBMITTED,
                 Application::STATUS_VIEWED,
                 Application::STATUS_SHORTLISTED,
-                Application::STATUS_REJECTED
+                Application::STATUS_REJECTED,
             ]),
             'cover_letter' => fake()->boolean(70) ? fake()->randomElement($coverLetterTemplates) : null,
         ];
@@ -121,4 +121,4 @@ class ApplicationFactory extends Factory
             'cover_letter' => null,
         ]);
     }
-} 
+}

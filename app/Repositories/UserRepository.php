@@ -247,4 +247,4 @@ class UserRepository
     {
         return User::count();
     }
-} 
+}

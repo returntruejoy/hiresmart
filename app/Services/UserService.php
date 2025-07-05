@@ -6,9 +6,9 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class UserService
@@ -25,7 +25,7 @@ class UserService
         // Check if email already exists
         if ($this->userRepository->emailExists($data['email'])) {
             throw ValidationException::withMessages([
-                'email' => ['The email address is already registered.']
+                'email' => ['The email address is already registered.'],
             ]);
         }
 
@@ -35,7 +35,7 @@ class UserService
         }
 
         // Set default role if not provided
-        if (!isset($data['role'])) {
+        if (! isset($data['role'])) {
             $data['role'] = User::ROLE_CANDIDATE;
         }
 
@@ -51,10 +51,11 @@ class UserService
             \Log::info('User created', [
                 'user_id' => $user->id,
                 'email' => $user->email,
-                'role' => $user->role
+                'role' => $user->role,
             ]);
 
             DB::commit();
+
             return $user;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -71,7 +72,7 @@ class UserService
         if (isset($data['email']) && $data['email'] !== $user->email) {
             if ($this->userRepository->emailExists($data['email'])) {
                 throw ValidationException::withMessages([
-                    'email' => ['The email address is already taken.']
+                    'email' => ['The email address is already taken.'],
                 ]);
             }
         }
@@ -84,18 +85,19 @@ class UserService
         // Validate role if being updated
         if (isset($data['role'])) {
             $this->validateRole($data['role']);
-            
+
             // Log role change if different
             if ($data['role'] !== $user->role) {
                 \Log::info('User role changed', [
                     'user_id' => $user->id,
                     'old_role' => $user->role,
-                    'new_role' => $data['role']
+                    'new_role' => $data['role'],
                 ]);
             }
         }
 
         $this->userRepository->update($user, $data);
+
         return $user->fresh();
     }
 
@@ -129,6 +131,7 @@ class UserService
     public function getUsersByRole(string $role, int $perPage = 15): LengthAwarePaginator
     {
         $this->validateRole($role);
+
         return $this->userRepository->getPaginatedByRole($role, $perPage);
     }
 
@@ -139,10 +142,10 @@ class UserService
     {
         // Sanitize search query
         $query = trim($query);
-        
+
         if (strlen($query) < 2) {
             throw ValidationException::withMessages([
-                'query' => ['Search query must be at least 2 characters long.']
+                'query' => ['Search query must be at least 2 characters long.'],
             ]);
         }
 
@@ -155,20 +158,20 @@ class UserService
     public function changeUserRole(User $user, string $newRole): User
     {
         $this->validateRole($newRole);
-        
+
         $oldRole = $user->role;
-        
+
         if ($oldRole === $newRole) {
             throw ValidationException::withMessages([
-                'role' => ['User already has this role.']
+                'role' => ['User already has this role.'],
             ]);
         }
 
         $this->userRepository->assignRole($user, $newRole);
-        
+
         // Send role change notification
         $this->sendRoleChangeNotification($user, $oldRole, $newRole);
-        
+
         return $user->fresh();
     }
 
@@ -180,7 +183,7 @@ class UserService
         // Prevent deletion of the last admin
         if ($user->isAdmin() && $this->userRepository->countByRole(User::ROLE_ADMIN) <= 1) {
             throw ValidationException::withMessages([
-                'user' => ['Cannot delete the last admin user.']
+                'user' => ['Cannot delete the last admin user.'],
             ]);
         }
 
@@ -189,7 +192,7 @@ class UserService
         if ($result) {
             \Log::info('User soft deleted', [
                 'user_id' => $user->id,
-                'email' => $user->email
+                'email' => $user->email,
             ]);
         }
 
@@ -206,7 +209,7 @@ class UserService
         if ($result) {
             \Log::info('User restored', [
                 'user_id' => $user->id,
-                'email' => $user->email
+                'email' => $user->email,
             ]);
         }
 
@@ -219,7 +222,7 @@ class UserService
     public function getUserStatistics(): array
     {
         $stats = $this->userRepository->getRoleCounts();
-        
+
         // Add additional statistics
         $stats['verified'] = $this->userRepository->getVerifiedUsers()->count();
         $stats['unverified'] = $stats['total'] - $stats['verified'];
@@ -263,10 +266,10 @@ class UserService
         // Check if trying to delete all admins
         $adminIds = $this->userRepository->getAdmins()->pluck('id')->toArray();
         $adminIdsToDelete = array_intersect($userIds, $adminIds);
-        
+
         if (count($adminIdsToDelete) >= count($adminIds)) {
             throw ValidationException::withMessages([
-                'users' => ['Cannot delete all admin users.']
+                'users' => ['Cannot delete all admin users.'],
             ]);
         }
 
@@ -297,10 +300,10 @@ class UserService
     private function validateRole(string $role): void
     {
         $validRoles = [User::ROLE_ADMIN, User::ROLE_EMPLOYER, User::ROLE_CANDIDATE];
-        
-        if (!in_array($role, $validRoles)) {
+
+        if (! in_array($role, $validRoles)) {
             throw ValidationException::withMessages([
-                'role' => ['Invalid role specified.']
+                'role' => ['Invalid role specified.'],
             ]);
         }
     }
@@ -325,7 +328,7 @@ class UserService
         } catch (\Exception $e) {
             \Log::error('Failed to send welcome email', [
                 'user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -340,8 +343,8 @@ class UserService
         } catch (\Exception $e) {
             \Log::error('Failed to send role change notification', [
                 'user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
-} 
+}

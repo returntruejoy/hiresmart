@@ -13,8 +13,6 @@ class JobPostRepository
 
     /**
      * JobPostRepository constructor.
-     *
-     * @param JobPost $jobPost
      */
     public function __construct(JobPost $jobPost)
     {
@@ -30,6 +28,7 @@ class JobPostRepository
     {
         $record = $this->model->findOrFail($id);
         $record->update($data);
+
         return $record;
     }
 
@@ -52,15 +51,15 @@ class JobPostRepository
     {
         $query = $this->model->query()->where('is_active', true);
 
-        if (!empty($filters['keyword'])) {
+        if (! empty($filters['keyword'])) {
             $query->where(function ($q) use ($filters) {
-                $q->where('title', 'like', '%' . $filters['keyword'] . '%')
-                  ->orWhere('description', 'like', '%' . $filters['keyword'] . '%');
+                $q->where('title', 'like', '%'.$filters['keyword'].'%')
+                    ->orWhere('description', 'like', '%'.$filters['keyword'].'%');
             });
         }
 
-        if (!empty($filters['location'])) {
-            $query->where('location', 'like', '%' . $filters['location'] . '%');
+        if (! empty($filters['location'])) {
+            $query->where('location', 'like', '%'.$filters['location'].'%');
         }
 
         return $query->latest()->get();
@@ -75,4 +74,4 @@ class JobPostRepository
     {
         return $this->model->where('is_active', true)->latest()->get();
     }
-} 
+}

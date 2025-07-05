@@ -29,14 +29,14 @@ class RegistrationRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                'min:2'
+                'min:2',
             ],
             'email' => [
                 'required',
                 'string',
                 'email',
                 'max:255',
-                'unique:users,email'
+                'unique:users,email',
             ],
             'password' => [
                 'required',
@@ -46,13 +46,13 @@ class RegistrationRequest extends FormRequest
                     ->letters()
                     ->mixedCase()
                     ->numbers()
-                    ->symbols()
+                    ->symbols(),
             ],
             'role' => [
                 'sometimes',
                 'string',
-                Rule::in([User::ROLE_EMPLOYER, User::ROLE_CANDIDATE])
-            ]
+                Rule::in([User::ROLE_EMPLOYER, User::ROLE_CANDIDATE]),
+            ],
         ];
     }
 
@@ -69,7 +69,7 @@ class RegistrationRequest extends FormRequest
             'email.unique' => 'This email address is already registered.',
             'password.required' => 'Password is required.',
             'password.confirmed' => 'Password confirmation does not match.',
-            'role.in' => 'The selected role is invalid. Please choose either employer or candidate.'
+            'role.in' => 'The selected role is invalid. Please choose either employer or candidate.',
         ];
     }
 
@@ -82,7 +82,7 @@ class RegistrationRequest extends FormRequest
             'name' => 'full name',
             'email' => 'email address',
             'password' => 'password',
-            'role' => 'user role'
+            'role' => 'user role',
         ];
     }
 
@@ -92,23 +92,23 @@ class RegistrationRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         // Set default role to candidate if not provided
-        if (!$this->has('role')) {
+        if (! $this->has('role')) {
             $this->merge([
-                'role' => User::ROLE_CANDIDATE
+                'role' => User::ROLE_CANDIDATE,
             ]);
         }
 
         // Clean and format name
         if ($this->has('name')) {
             $this->merge([
-                'name' => trim($this->input('name'))
+                'name' => trim($this->input('name')),
             ]);
         }
 
         // Normalize email to lowercase
         if ($this->has('email')) {
             $this->merge([
-                'email' => strtolower(trim($this->input('email')))
+                'email' => strtolower(trim($this->input('email'))),
             ]);
         }
     }
@@ -122,7 +122,7 @@ class RegistrationRequest extends FormRequest
             response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422)
         );
     }

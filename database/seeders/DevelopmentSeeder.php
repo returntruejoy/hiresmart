@@ -44,7 +44,7 @@ class DevelopmentSeeder extends Seeder
 
         // Create test candidates
         $this->command->info('Creating test candidates...');
-        
+
         // Senior PHP/Laravel candidate
         $candidate1 = User::factory()->candidate()->create([
             'name' => 'Alice Developer',
@@ -80,7 +80,7 @@ class DevelopmentSeeder extends Seeder
 
         // Create test job posts
         $this->command->info('Creating test job posts...');
-        
+
         // Senior Laravel position
         $job1 = JobPost::factory()->create([
             'employer_id' => $employer1->id,
@@ -125,7 +125,7 @@ class DevelopmentSeeder extends Seeder
 
         // Create test applications
         $this->command->info('Creating test applications...');
-        
+
         // Alice applies to Senior Laravel position (perfect match)
         Application::factory()->create([
             'job_post_id' => $job1->id,
@@ -152,7 +152,7 @@ class DevelopmentSeeder extends Seeder
 
         // Create test job matches
         $this->command->info('Creating test job matches...');
-        
+
         // High match: Alice + Senior Laravel job
         JobMatch::factory()->create([
             'job_post_id' => $job1->id,
@@ -206,7 +206,7 @@ class DevelopmentSeeder extends Seeder
 
         // Add some additional random data for variety
         $this->command->info('Adding additional test data...');
-        
+
         // Create a few more candidates and employers
         User::factory(5)->employer()->create();
         User::factory(10)->candidate()->create()->each(function ($candidate) {
@@ -242,13 +242,13 @@ class DevelopmentSeeder extends Seeder
         $this->command->info('- candidate3@hiresmart.com (Carol Fullstack - Full Stack)');
         $this->command->info('');
         $this->command->info('Total Data:');
-        $this->command->info('- Users: ' . User::count());
-        $this->command->info('- Job Posts: ' . JobPost::count());
-        $this->command->info('- Skills: ' . Skill::count());
-        $this->command->info('- Applications: ' . Application::count());
-        $this->command->info('- Job Matches: ' . JobMatch::count());
+        $this->command->info('- Users: '.User::count());
+        $this->command->info('- Job Posts: '.JobPost::count());
+        $this->command->info('- Skills: '.Skill::count());
+        $this->command->info('- Applications: '.Application::count());
+        $this->command->info('- Job Matches: '.JobMatch::count());
         $this->command->info('');
         $this->command->info('All test accounts use password: "password"');
         $this->command->info('===================================');
     }
-} 
+}

@@ -39,6 +39,7 @@ class ArchiveOldJobPosts extends Command
 
         if ($jobsToArchive === 0) {
             $this->info('No job posts found to archive.');
+
             return 0;
         }
 
@@ -50,10 +51,10 @@ class ArchiveOldJobPosts extends Command
         $this->info("Successfully archived {$archivedJobs} job post(s).");
 
         // Log the action
-        Log::info("Job archiving completed", [
+        Log::info('Job archiving completed', [
             'archived_count' => $archivedJobs,
             'cutoff_date' => $cutoffDate->format('Y-m-d'),
-            'days_threshold' => $days
+            'days_threshold' => $days,
         ]);
 
         return 0;

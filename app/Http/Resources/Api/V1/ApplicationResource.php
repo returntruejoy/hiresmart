@@ -23,4 +23,4 @@ class ApplicationResource extends JsonResource
             'candidate' => new UserResource($this->whenLoaded('candidate')),
         ];
     }
-} 
+}

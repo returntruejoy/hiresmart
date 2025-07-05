@@ -28,4 +28,4 @@ return new class extends Migration
             $table->dropColumn(['location_preference', 'salary_expectation_min', 'salary_expectation_max', 'bio']);
         });
     }
-}; 
+};

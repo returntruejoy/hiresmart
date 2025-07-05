@@ -17,12 +17,11 @@ class JobPostService
      * Cache key for recent job listings
      */
     const RECENT_JOBS_CACHE_KEY = 'recent_job_listings';
-    const CACHE_TTL = 300; 
+
+    const CACHE_TTL = 300;
 
     /**
      * JobPostService constructor.
-     *
-     * @param JobPostRepository $jobPostRepository
      */
     public function __construct(JobPostRepository $jobPostRepository)
     {
@@ -33,33 +32,34 @@ class JobPostService
     {
         $data['employer_id'] = Auth::id();
         $jobPost = $this->jobPostRepository->create($data);
-        
+
         $this->clearRecentJobsCache();
-        
+
         return $jobPost;
     }
 
     public function updateJobPost(array $data, $id)
     {
         $jobPost = $this->jobPostRepository->update($data, $id);
-        
+
         $this->clearRecentJobsCache();
-        
+
         return $jobPost;
     }
 
     public function deleteJobPost($id)
     {
         $result = $this->jobPostRepository->delete($id);
-        
+
         $this->clearRecentJobsCache();
-        
+
         return $result;
     }
 
     public function getJobPostsForCurrentUser()
     {
         $userId = Auth::id();
+
         return $this->jobPostRepository->getForEmployer($userId);
     }
 
