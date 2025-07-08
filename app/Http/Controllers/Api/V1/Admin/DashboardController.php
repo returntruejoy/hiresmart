@@ -4,29 +4,32 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\DashboardService;
-use Illuminate\Http\Request;
+use App\Traits\ApiResponseTrait;
+use Illuminate\Http\JsonResponse;
 
 class DashboardController extends Controller
 {
-    protected $dashboardService;
+    use ApiResponseTrait;
+
+    protected DashboardService $dashboardService;
 
     public function __construct(DashboardService $dashboardService)
     {
         $this->dashboardService = $dashboardService;
     }
 
-    public function index()
+    public function index(): JsonResponse
     {
         $metrics = $this->dashboardService->getMetrics();
 
-        return response()->json(['data' => $metrics]);
+        return $this->successResponse($metrics, 'Admin dashboard metrics retrieved successfully.');
     }
 
-    public function employerStats(Request $request)
+    public function employerStats(): JsonResponse
     {
-        $employerId = $request->user()->id;
+        $employerId = auth()->id();
         $stats = $this->dashboardService->getEmployerStats($employerId);
 
-        return response()->json($stats);
+        return $this->successResponse($stats, 'Employer statistics retrieved successfully.');
     }
 }

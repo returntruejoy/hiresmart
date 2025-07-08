@@ -6,41 +6,38 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\ApplicationResource;
 use App\Models\JobPost;
 use App\Services\ApplicationService;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Support\Facades\Gate;
 
 class ApplicationController extends Controller
 {
-    /**
-     * @var ApplicationService
-     */
-    protected $applicationService;
+    use ApiResponseTrait;
 
-    /**
-     * ApplicationController constructor.
-     */
+    protected ApplicationService $applicationService;
+
     public function __construct(ApplicationService $applicationService)
     {
         $this->applicationService = $applicationService;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(JobPost $jobPost)
     {
         Gate::authorize('view-applications', $jobPost);
         $applications = $this->applicationService->getApplicationsForJobPost($jobPost->id);
 
-        return ApplicationResource::collection($applications);
+        return $this->successResponse(
+            ApplicationResource::collection($applications),
+            'Applications retrieved successfully.'
+        );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(JobPost $jobPost)
     {
         $application = $this->applicationService->createApplication($jobPost->id);
 
-        return new ApplicationResource($application);
+        return $this->createdResponse(
+            new ApplicationResource($application),
+            'Application submitted successfully.'
+        );
     }
 }
